@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeShot — Beautiful Code Screenshots</title>
+<link rel="stylesheet" href="css.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Fira+Code:wght@400;500&family=Source+Code+Pro:ital,wght@0,400;0,600&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400&family=Roboto+Mono:ital,wght@0,400;0,500;1,400&family=Inconsolata:wght@400;500&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="logo">
+      <div class="logo-icon">⟨/⟩</div>
+      <div>
+        <div class="logo-name">CodeShot</div>
+        <div class="logo-sub">beautiful code screenshots</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a class="btn" href="https://github.com/Mansiper/CodeShot" target="_blank" rel="noopener noreferrer" title="GitHub">
+        <svg width="13" height="13" viewBox="0 0 98 96" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+        GitHub
+      </a>
+      <a class="btn" href="https://buymeacoffee.com/mansiper" target="_blank" rel="noopener noreferrer" title="Support me">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        Support me
+      </a>
+      <button class="btn" id="theme-mode-btn" title="Toggle light/dark mode">
+        <svg id="theme-mode-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+
+      <span id="canvas-info"></span>
+      <button class="btn" id="copy-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy PNG
+      </button>
+      <button class="btn btn-primary" id="export-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export PNG
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- SETTINGS PANEL -->
+    <aside id="settings-panel">
+
+      <div class="section">
+        <div class="section-title">Parameters</div>
+        <div class="field">
+          <div class="field-label">Mode</div>
+          <div class="toggle-group" id="input-mode-group">
+            <button class="toggle-btn" data-val="code">Code</button>
+            <button class="toggle-btn" data-val="text">Plain Text</button>
+          </div>
+        </div>
+        <div id="lang-wrap">
+          <div class="field">
+            <div class="field-label">Language</div>
+            <select id="lang-select"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Appearance</div>
+        <div id="code-font-wrap">
+          <div class="field">
+            <div class="field-label">Font</div>
+            <select id="font-select">
+              <option value="Courier New">Courier New</option>
+              <option value="DM Mono">DM Mono</option>
+              <option value="Fira Code">Fira Code</option>
+              <option value="Inconsolata">Inconsolata</option>
+              <option value="JetBrains Mono">JetBrains Mono</option>
+              <option value="Roboto Mono">Roboto Mono</option>
+              <option value="Source Code Pro">Source Code Pro</option>
+              <option value="Space Mono">Space Mono</option>
+              <option value="monospace">System Monospace</option>
+              <option value="Ubuntu Mono">Ubuntu Mono</option>
+            </select>
+          </div>
+        </div>
+        <div id="plain-font-wrap" style="display:none">
+          <div class="field">
+            <div class="field-label">Font</div>
+            <select id="plain-font-select"></select>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Size <span class="field-value" id="font-size-val"></span></div>
+          <input type="range" id="font-size" min="10" max="32" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Line Height <span class="field-value" id="line-height-val"></span></div>
+          <input type="range" id="line-height" min="0.8" max="2.2" step="0.1">
+        </div>
+        <div id="text-color-wrap" style="display:none">
+          <div class="color-row">
+            <span class="color-label">Text Color</span>
+            <input type="color" id="plain-text-color">
+          </div>
+          <div class="color-row">
+            <span class="color-label">Background</span>
+            <input type="color" id="plain-text-bg">
+          </div>
+        </div>
+        <div id="theme-wrap">
+          <div class="field">
+            <div class="field-label">Theme</div>
+            <div class="theme-grid" id="theme-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Background</div>
+        <div class="field">
+          <div class="toggle-group" id="bg-type-group">
+            <button class="toggle-btn" data-val="solid">Solid</button>
+            <button class="toggle-btn" data-val="gradient">Gradient</button>
+            <button class="toggle-btn" data-val="none">Transparent</button>
+          </div>
+        </div>
+        <div id="bg-solid-wrap">
+          <div class="color-row">
+            <span class="color-label">Color</span>
+            <input type="color" id="bg-solid-color">
+          </div>
+        </div>
+        <div id="bg-grad-wrap">
+          <div class="gradient-presets" id="grad-presets"></div>
+          <div class="color-row">
+            <span class="color-label">Color 1</span>
+            <input type="color" id="grad-c1">
+          </div>
+          <div class="color-row">
+            <span class="color-label">Color 2</span>
+            <input type="color" id="grad-c2">
+          </div>
+          <div class="field">
+            <div class="field-label">Angle <span class="field-value" id="grad-angle-val"></span></div>
+            <input type="range" id="grad-angle" min="0" max="360" step="5">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Outer Padding <span class="field-value" id="outer-padding-val"></span></div>
+          <input type="range" id="outer-padding" min="0" max="160" step="4">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Selection</div>
+        <div class="color-row">
+          <span class="color-label">Selection Color</span>
+          <input type="color" id="selection-color">
+        </div>
+        <div class="field">
+          <div class="field-label">Selection Opacity <span class="field-value" id="selection-opacity-val"></span></div>
+          <input type="range" id="selection-opacity" min="0" max="100" value="25">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Frame</div>
+        <div class="field">
+          <div class="field-label">Zoom <span class="field-value" id="zoom-val"></span></div>
+          <input type="range" id="zoom" min="50" max="300" step="5">
+        </div>
+        <div class="field">
+          <div class="field-label">Inner Padding <span class="field-value" id="inner-padding-val"></span></div>
+          <input type="range" id="inner-padding" min="8" max="100" step="2">
+        </div>
+        <div class="field">
+          <div class="field-label">Corner Radius <span class="field-value" id="corner-val"></span></div>
+          <input type="range" id="corner-radius" min="0" max="50" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Window Style</div>
+          <div class="chrome-grid" id="chrome-grid"></div>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <label class="switch" id="lineno-switch">
+            <div class="switch-track"></div>
+            <span>Line numbers</span>
+          </label>
+        </div>
+        <div class="field">
+          <label class="switch" id="shadow-switch">
+            <div class="switch-track"></div>
+            <span>Drop shadow</span>
+          </label>
+          <div id="shadow-sub" style="margin-top:8px">
+            <div class="field-label">Shadow blur <span class="field-value" id="shadow-blur-val"></span></div>
+            <input type="range" id="shadow-blur" min="0" max="80" step="2">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Filters</div>
+        <div class="field">
+          <div class="filter-grid" id="filter-grid"></div>
+        </div>
+        <div class="field" id="filter-intensity-wrap">
+          <div class="field-label">Intensity <span class="field-value" id="filter-intensity-val"></span></div>
+          <input type="range" id="filter-intensity" min="0" max="100" step="1">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3D Transform</div>
+        <div class="field">
+          <div class="field-label">Rotate Z° <span class="field-value" id="tilt-val"></span></div>
+          <input type="range" id="tilt-angle" min="-45" max="45" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Depth X° <span class="field-value" id="depth-val"></span></div>
+          <input type="range" id="depth-angle" min="-60" max="60" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Depth Y° <span class="field-value" id="depthy-val"></span></div>
+          <input type="range" id="depthangleY" min="-60" max="60" step="1">
+        </div>
+        <button class="btn" id="reset-3d" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset 3D</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Trapezoid</div>
+        <div class="field">
+          <div class="field-label">Left height <span class="field-value" id="trap-left-val"></span></div>
+          <input type="range" id="trap-left" min="20" max="100" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Right height <span class="field-value" id="trap-right-val"></span></div>
+          <input type="range" id="trap-right" min="20" max="100" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Top width <span class="field-value" id="trap-top-val"></span></div>
+          <input type="range" id="trap-top" min="20" max="100" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Bottom width <span class="field-value" id="trap-bottom-val"></span></div>
+          <input type="range" id="trap-bottom" min="20" max="100" step="1">
+        </div>
+        <button class="btn" id="reset-trap" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset Trapezoid</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Gradient Blur</div>
+        <div class="field">
+          <label class="switch" id="gblur-switch">
+            <div class="switch-track"></div>
+            <span>Enable</span>
+          </label>
+        </div>
+        <div id="gblur-controls">
+          <div class="field">
+            <div class="field-label">Direction</div>
+            <div class="toggle-group" id="gblur-dir-group">
+              <button class="toggle-btn" data-val="right">→</button>
+              <button class="toggle-btn" data-val="left">←</button>
+              <button class="toggle-btn" data-val="bottom">↓</button>
+              <button class="toggle-btn" data-val="top">↑</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Max blur <span class="field-value" id="gblur-amount-val"></span></div>
+            <input type="range" id="gblur-amount" min="1" max="60" step="1">
+          </div>
+          <div class="field">
+            <div class="field-label">Fade start % <span class="field-value" id="gblur-start-val"></span></div>
+            <input type="range" id="gblur-start" min="0" max="100" step="5">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Watermark</div>
+        <div class="field">
+          <label class="switch" id="watermark-switch">
+            <div class="switch-track"></div>
+            <span>Show "Made in CodeShot"</span>
+          </label>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- EDITOR -->
+    <main id="editor-panel">
+      <div class="panel-header">
+        <span class="panel-title">Input</span>
+        <button class="btn" id="clear-btn" style="padding:3px 9px;font-size:10px">Clear</button>
+      </div>
+      <div id="code-editor-wrap">
+        <div id="code-highlight" aria-hidden="true"></div>
+        <textarea id="code-input" placeholder="// Paste or type your code here…" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+      </div>
+    </main>
+
+    <!-- RESIZE HANDLE -->
+    <div id="resize-handle"></div>
+
+    <!-- PREVIEW -->
+    <section id="preview-panel">
+      <div class="panel-header">
+        <span class="panel-title">Preview</span>
+      </div>
+      <div id="preview-wrap">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
