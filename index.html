@@ -34,14 +34,35 @@
       </button>
 
       <span id="canvas-info"></span>
-      <button class="btn" id="copy-btn">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        Copy PNG
-      </button>
-      <button class="btn btn-primary" id="export-btn">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export PNG
-      </button>
+      <div class="btn-split">
+        <button class="btn" id="copy-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy PNG
+        </button>
+        <button class="btn btn-split-caret" id="copy-caret" title="More copy formats">
+          <svg width="8" height="5" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+        </button>
+        <div class="btn-dropdown" id="copy-dropdown">
+          <button class="dropdown-item" data-fmt="png">PNG</button>
+          <button class="dropdown-item" data-fmt="base64">Base64 (PNG)</button>
+        </div>
+      </div>
+      <div class="btn-split">
+        <button class="btn btn-primary" id="export-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export PNG
+        </button>
+        <button class="btn btn-primary btn-split-caret" id="export-caret" title="More export formats">
+          <svg width="8" height="5" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+        </button>
+        <div class="btn-dropdown" id="export-dropdown">
+          <button class="dropdown-item" data-fmt="png">PNG</button>
+          <button class="dropdown-item" data-fmt="jpg">JPG</button>
+          <button class="dropdown-item" data-fmt="gif">GIF</button>
+          <button class="dropdown-item" data-fmt="tiff">TIFF</button>
+          <button class="dropdown-item" data-fmt="base64">Base64 (PNG)</button>
+        </div>
+      </div>
     </div>
   </header>
 

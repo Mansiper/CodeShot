@@ -15,6 +15,7 @@ No installs. No accounts. Just paste, style, and export.
 ## Features
 
 - **Syntax highlighting** for 40+ languages via [highlight.js](https://highlightjs.org/) — JavaScript, TypeScript, Python, Rust, Go, SQL, and more
+- **Plain text align**
 - **8 code themes** — One Dark, Monokai, Dracula, Nord, Tokyo Night, GitHub Dark/Light, Solarized
 - **9 monospace fonts** — JetBrains Mono, Fira Code, Source Code Pro, Space Mono, and more
 - **Plain text mode** with custom font and color picker
@@ -28,7 +29,8 @@ No installs. No accounts. Just paste, style, and export.
 - **Selection highlight** with custom color and opacity
 - **Line numbers** toggle
 - **Zoom** from 50% to 300%
-- **Copy to clipboard** or **Export PNG** with one click
+- **Window opacity**
+- **Copy to clipboard** or **Export** to one of 5 formats
 - **Settings auto-saved** to `localStorage` — your config persists across sessions
 - **Light/dark UI** toggle
 - **Resizable** editor/preview split pane
