@@ -96,6 +96,7 @@ const DEFAULTS = {
   selectionColor: '#6490ff',
   selectionOpacity: 25,
   zoom: 100,
+  windowOpacity: 100,
 };
 
 let state = { ...DEFAULTS };
@@ -563,11 +564,14 @@ function doRender() {
 
   // Draw image
   const isFlat = tZ===0 && rX===0 && rY===0 && tL===100 && tR===100 && tT===100 && tBot===100;
+  ctx.save();
+  ctx.globalAlpha = state.windowOpacity / 100;
   if (isFlat) {
     ctx.drawImage(off, op + (baseW - iw) / 2, op + (baseH - ih) / 2);
   } else {
     drawIntoQuad(ctx, off, corners);
   }
+  ctx.restore();
 
   // Apply image filter over the full canvas
   const filterStr = buildFilterString(state.filter, state.filterIntensity);
@@ -778,6 +782,7 @@ function syncUI() {
   setSwitch('shadow-switch', state.showShadow);
   setRange('shadow-blur', state.shadowBlur, 'shadow-blur-val', v=>v+'px');
   setRange('zoom', state.zoom, 'zoom-val', v => v + '%');
+  setRange('window-opacity', state.windowOpacity, 'window-opacity-val', v => v + '%');
 
   // 3D
   setRange('tilt-angle', state.tiltAngle, 'tilt-val', v=>v+'°');
@@ -901,6 +906,7 @@ function bindEvents() {
   bindR('gblur-amount','gradBlurAmount','gblur-amount-val',v=>v+'px');
   bindR('gblur-start','gradBlurStart','gblur-start-val',v=>v+'%');
   bindR('zoom', 'zoom', 'zoom-val', v => v + '%');
+  bindR('window-opacity', 'windowOpacity', 'window-opacity-val', v => v + '%');
 
   // Colors
   document.getElementById('bg-solid-color').addEventListener('input', e => change('bgSolid', e.target.value));
