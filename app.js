@@ -4,7 +4,7 @@
    CONSTANTS
 ════════════════════════════════════════════ */
 
-const STORAGE_KEY  = 'codeshot_v3';
+const STORAGE_KEY  = 'codeshot';
 const SPLIT_KEY    = 'codeshot_split';
 const SAVE_DELAY   = 1000;
 const UI_THEME_KEY = 'codeshot_ui_theme';
@@ -335,7 +335,7 @@ function renderCode() {
       const sel = raw.slice(cS, cE).replace(/\t/g, '    ');
       const xOff = ctx.measureText(pre).width;
       const xW   = sel.length ? ctx.measureText(sel).width : ctx.measureText(' ').width;
-      ctx.fillRect(innerPadding + lineNoW + xOff, innerPadding + chromeH + li * lh, xW, lh);
+      ctx.fillRect(innerPadding + lineNoW + xOff, innerPadding + chromeH + li * lh - Math.round((fontSize + 1) / 5.5), xW, lh);
     }
   }
 
@@ -584,8 +584,8 @@ function doRender() {
 
   // Watermark
   if (showWatermark) {
-    const wmText = 'CodeShot';
-    const wmFontSize = Math.max(10, Math.round(cW * 0.018));
+    const wmText = 'github.com/Mansiper/CodeShot';
+    const wmFontSize = Math.max(10, Math.round(cW * 0.015));
     ctx.save();
     ctx.font = `${wmFontSize}px "Segoe UI",Arial,sans-serif`;
     ctx.textBaseline = 'bottom';
@@ -990,6 +990,14 @@ function bindEvents() {
   document.getElementById('reset-trap').addEventListener('click', () => {
     state.trapLeft=100; state.trapRight=100; state.trapTop=100; state.trapBottom=100;
     syncUI(); scheduleRender(); scheduleSave();
+  });
+  document.getElementById('reset-params-btn').addEventListener('click', () => {
+    const code = state.code;
+    state = { ...DEFAULTS, code };
+    tokCache = null;
+    syncUI();
+    scheduleRender();
+    scheduleSave();
   });
 
   // Preview wrap resize observer

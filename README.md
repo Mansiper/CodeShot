@@ -1,12 +1,12 @@
 <div align="center">
 
-# ⟨/⟩ CodeShot
+# CodeShot
 
 **Beautiful code screenshots — right in your browser.**
 
 No installs. No accounts. Just paste, style, and export.
 
-[**Try it live →**](https://mansiper.github.io/codeshot) &nbsp;·&nbsp; [Support the project ☕](https://buymeacoffee.com/mansiper)
+[**Try it live →**](https://mansiper.github.io/CodeShot/) &nbsp;·&nbsp; [Support the project ☕](https://buymeacoffee.com/mansiper)
 
 </div>
 
@@ -60,4 +60,4 @@ No installs. No accounts. Just paste, style, and export.
 
 ## License
 
-MIT
+[MIT](https://github.com/Mansiper/CodeShot/blob/master/LICENSE)
