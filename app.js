@@ -53,6 +53,19 @@ const FILTERS = [
   { id: 'amber',     name: 'Amber',     preview: 'linear-gradient(135deg,#3d1c00,#ff8c00)' },
 ];
 
+const TEXTURES = [
+  { id: 'none',          name: 'None',     preview: 'linear-gradient(135deg,#444,#888)' },
+  { id: 'paper',         name: 'Paper',    preview: 'linear-gradient(135deg,#c8b89a,#e8dfc0)' },
+  { id: 'grain',         name: 'Grain',    preview: 'linear-gradient(135deg,#2a2a2a,#666)' },
+  { id: 'linen',         name: 'Linen',    preview: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.12) 3px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.06) 3px)' },
+  { id: 'wood',          name: 'Wood',     preview: 'linear-gradient(135deg,#5d3a1a,#a0522d,#7b3f00)' },
+  { id: 'metal-shiny',   name: 'Metal',    preview: 'linear-gradient(120deg,#888,#ddd,#aaa,#eee,#999)' },
+  { id: 'metal-brushed', name: 'Brushed',  preview: 'repeating-linear-gradient(180deg,#999 0px,#bbb 1px,#aaa 2px,#ccc 3px)' },
+  { id: 'carbon',        name: 'Carbon',   preview: 'repeating-linear-gradient(45deg,#111 0px,#333 4px,#111 8px)' },
+  { id: 'scanlines',     name: 'Scanlines',preview: 'repeating-linear-gradient(180deg,rgba(0,0,0,.35) 0px,rgba(0,0,0,.35) 1px,transparent 1px,transparent 2px)' },
+  { id: 'glitter',       name: 'Glitter',  preview: 'radial-gradient(circle at 20% 40%,#ff0 1px,transparent 2px),radial-gradient(circle at 60% 70%,#f0f 1px,transparent 2px),radial-gradient(circle at 80% 20%,#0ff 1px,transparent 2px),linear-gradient(135deg,#111,#333)' },
+];
+
 const LANGUAGES = ['bash','c','csharp','cpp','css','dart','dockerfile','elixir','go','graphql','groovy','haskell','html','java','javascript','json','jsx','kotlin','lua','makefile','markdown','matlab','nginx','perl','php','powershell','python','r','ruby','rust','scala','scss','shell','sql','swift','toml','tsx','typescript','vim','xml','yaml'];
 
 const LANGUAGE_NAMES = {
@@ -98,6 +111,8 @@ const DEFAULTS = {
   zoom: 100,
   windowOpacity: 100,
   plainTextAlign: 'left',
+  texture: 'none',
+  textureIntensity: 50,
 };
 
 let state = { ...DEFAULTS };
@@ -535,6 +550,199 @@ function buildFilterString(filterId, intensity) {
 }
 
 /* ════════════════════════════════════════════
+   TEXTURES
+════════════════════════════════════════════ */
+
+function applyTexture(ctx, cW, cH, textureId, intensity) {
+  if (textureId === 'none' || intensity === 0) return;
+  const a = intensity / 100;
+
+  function patternFill(tile, alpha) {
+    const pat = ctx.createPattern(tile, 'repeat');
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = pat;
+    ctx.fillRect(0, 0, cW, cH);
+    ctx.restore();
+  }
+
+  function noiseTile(size, r, g, b, spread) {
+    const tile = document.createElement('canvas');
+    tile.width = size; tile.height = size;
+    const tc = tile.getContext('2d');
+    const img = tc.createImageData(size, size);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const n = (Math.random() - 0.5) * spread;
+      d[i]   = Math.max(0, Math.min(255, r + n));
+      d[i+1] = Math.max(0, Math.min(255, g + n));
+      d[i+2] = Math.max(0, Math.min(255, b + n));
+      d[i+3] = 255;
+    }
+    tc.putImageData(img, 0, 0);
+    return tile;
+  }
+
+  switch (textureId) {
+
+    case 'paper': {
+      patternFill(noiseTile(128, 215, 200, 170, 55), a * 0.4);
+      break;
+    }
+
+    case 'grain': {
+      const tile = noiseTile(128, 128, 128, 128, 230);
+      const pat = ctx.createPattern(tile, 'repeat');
+      ctx.save();
+      ctx.globalCompositeOperation = 'overlay';
+      ctx.globalAlpha = a * 0.6;
+      ctx.fillStyle = pat;
+      ctx.fillRect(0, 0, cW, cH);
+      ctx.restore();
+      break;
+    }
+
+    case 'linen': {
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = a * 0.18;
+      for (let y = 0; y <= cH; y += 3) {
+        ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(cW, y + 0.5); ctx.stroke();
+      }
+      ctx.globalAlpha = a * 0.08;
+      for (let x = 0; x <= cW; x += 3) {
+        ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, cH); ctx.stroke();
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'wood': {
+      const size = 256;
+      const tile = document.createElement('canvas');
+      tile.width = size; tile.height = size;
+      const tc = tile.getContext('2d');
+      const img = tc.createImageData(size, size);
+      const d = img.data;
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const wave = Math.sin((y + x * 0.25) * 0.1 + Math.sin(y * 0.025) * 6) * 0.5 + 0.5;
+          const v = Math.round(65 + wave * 90);
+          const idx = (y * size + x) * 4;
+          d[idx]   = Math.min(255, v + 75);
+          d[idx+1] = Math.min(255, v + 22);
+          d[idx+2] = Math.max(0,   v - 25);
+          d[idx+3] = 255;
+        }
+      }
+      tc.putImageData(img, 0, 0);
+      patternFill(tile, a * 0.65);
+      break;
+    }
+
+    case 'metal-shiny': {
+      const stripeW = 28;
+      ctx.save();
+      for (let x = -cH; x < cW + cH; x += stripeW * 2) {
+        const g = ctx.createLinearGradient(x, 0, x + stripeW, cH);
+        g.addColorStop(0,    `rgba(255,255,255,0)`);
+        g.addColorStop(0.35, `rgba(255,255,255,${a * 0.3})`);
+        g.addColorStop(0.5,  `rgba(255,255,255,${a * 0.55})`);
+        g.addColorStop(0.65, `rgba(255,255,255,${a * 0.3})`);
+        g.addColorStop(1,    `rgba(255,255,255,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + stripeW, 0);
+        ctx.lineTo(x + stripeW + cH, cH);
+        ctx.lineTo(x + cH, cH);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'metal-brushed': {
+      const tile = document.createElement('canvas');
+      tile.width = 1; tile.height = cH;
+      const tc = tile.getContext('2d');
+      const img = tc.createImageData(1, cH);
+      const d = img.data;
+      for (let y = 0; y < cH; y++) {
+        const v = Math.round(160 + (Math.random() - 0.5) * 80);
+        const idx = y * 4;
+        d[idx]   = Math.min(255, v);
+        d[idx+1] = Math.min(255, v + 8);
+        d[idx+2] = Math.min(255, v + 18);
+        d[idx+3] = 255;
+      }
+      tc.putImageData(img, 0, 0);
+      ctx.save();
+      ctx.globalAlpha = a * 0.22;
+      ctx.drawImage(tile, 0, 0, cW, cH);
+      ctx.restore();
+      break;
+    }
+
+    case 'carbon': {
+      const ts = 8;
+      const tile = document.createElement('canvas');
+      tile.width = ts * 2; tile.height = ts * 2;
+      const tc = tile.getContext('2d');
+      for (let ty = 0; ty < 2; ty++) {
+        for (let tx = 0; tx < 2; tx++) {
+          tc.save();
+          tc.translate(tx * ts + ts / 2, ty * ts + ts / 2);
+          tc.rotate((tx + ty) % 2 === 0 ? Math.PI / 4 : -Math.PI / 4);
+          const g = tc.createLinearGradient(-ts, 0, ts, 0);
+          g.addColorStop(0,    'rgba(255,255,255,0.00)');
+          g.addColorStop(0.35, 'rgba(255,255,255,0.12)');
+          g.addColorStop(0.5,  'rgba(255,255,255,0.22)');
+          g.addColorStop(0.65, 'rgba(255,255,255,0.12)');
+          g.addColorStop(1,    'rgba(255,255,255,0.00)');
+          tc.fillStyle = g;
+          tc.fillRect(-ts, -ts / 2, ts * 2, ts);
+          tc.restore();
+        }
+      }
+      patternFill(tile, a);
+      break;
+    }
+
+    case 'scanlines': {
+      ctx.save();
+      ctx.globalAlpha = a * 0.3;
+      ctx.fillStyle = '#000';
+      for (let y = 0; y < cH; y += 2) {
+        ctx.fillRect(0, y, cW, 1);
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'glitter': {
+      const count = Math.round(cW * cH * 0.002);
+      ctx.save();
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * cW;
+        const y = Math.random() * cH;
+        const hue = Math.random() * 360;
+        const sz = Math.random() * 1.2 + 0.3;
+        ctx.globalAlpha = a * (0.5 + Math.random() * 0.5);
+        ctx.fillStyle = `hsl(${hue},100%,85%)`;
+        ctx.beginPath();
+        ctx.arc(x, y, sz, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+      break;
+    }
+  }
+}
+
+/* ════════════════════════════════════════════
    MAIN RENDER
 ════════════════════════════════════════════ */
 
@@ -619,6 +827,9 @@ function doRender() {
     ctx.drawImage(tmp, 0, 0);
     ctx.filter = 'none';
   }
+
+  // Apply texture overlay
+  applyTexture(ctx, cW, cH, state.texture, state.textureIntensity);
 
   // Watermark
   if (showWatermark) {
@@ -1011,6 +1222,11 @@ function syncUI() {
   setRange('filter-intensity', state.filterIntensity, 'filter-intensity-val', v => v + '%');
   document.getElementById('filter-intensity-wrap').style.opacity = state.filter === 'none' ? '0.35' : '1';
 
+  // Textures
+  document.querySelectorAll('.texture-btn').forEach(b => b.classList.toggle('active', b.dataset.texture === state.texture));
+  setRange('texture-intensity', state.textureIntensity, 'texture-intensity-val', v => v + '%');
+  document.getElementById('texture-intensity-wrap').style.opacity = state.texture === 'none' ? '0.35' : '1';
+
   // Selection
   document.getElementById('selection-color').value = state.selectionColor;
   setRange('selection-opacity', state.selectionOpacity, 'selection-opacity-val', v => v + '%');
@@ -1039,17 +1255,17 @@ function bindEvents() {
   // Code input (debounced)
   let codeTimer;
   document.getElementById('code-input').addEventListener('input', e => {
-    const lines = e.target.value.split('\n');
-    let changed = false;
-    if (lines.length > MAX_LINES) { lines.splice(MAX_LINES); changed = true; }
-    for (let i = 0; i < lines.length; i++) {
-        if (lines[i].length > MAX_COLS) { lines[i] = lines[i].slice(0, MAX_COLS); changed = true; }
-    }
-    if (changed) e.target.value = lines.join('\n');
-    updateEditorHighlight();
-    clearTimeout(codeTimer);
-    codeTimer = setTimeout(() => changeCode(e.target.value), 80);
-});
+      const lines = e.target.value.split('\n');
+      let changed = false;
+      if (lines.length > MAX_LINES) { lines.splice(MAX_LINES); changed = true; }
+      for (let i = 0; i < lines.length; i++) {
+          if (lines[i].length > MAX_COLS) { lines[i] = lines[i].slice(0, MAX_COLS); changed = true; }
+      }
+      if (changed) e.target.value = lines.join('\n');
+      updateEditorHighlight();
+      clearTimeout(codeTimer);
+      codeTimer = setTimeout(() => changeCode(e.target.value), 80);
+  });
   // Selection → highlight in canvas
   function updateSelectionRange() {
     const el = document.getElementById('code-input');
@@ -1175,6 +1391,13 @@ function bindEvents() {
   });
   bindR('filter-intensity', 'filterIntensity', 'filter-intensity-val', v => v + '%');
 
+  // Textures
+  document.getElementById('texture-grid').addEventListener('click', e => {
+    const b = e.target.closest('.texture-btn'); if (!b) return;
+    change('texture', b.dataset.texture); syncUI();
+  });
+  bindR('texture-intensity', 'textureIntensity', 'texture-intensity-val', v => v + '%');
+
   // Switches
   function bindSwitch(id, key) {
     document.getElementById(id).addEventListener('click', () => {
@@ -1296,6 +1519,16 @@ function buildUI() {
     b.innerHTML = `<div class="filter-preview" style="background:${f.preview}"></div>
       <div class="filter-name">${f.name}</div>`;
     fg.appendChild(b);
+  }
+
+  // Textures
+  const txg = document.getElementById('texture-grid');
+  for (const t of TEXTURES) {
+    const b = document.createElement('button');
+    b.className = 'filter-btn texture-btn'; b.dataset.texture = t.id;
+    b.innerHTML = `<div class="filter-preview" style="background:${t.preview}"></div>
+      <div class="filter-name">${t.name}</div>`;
+    txg.appendChild(b);
   }
 
   // Plain text fonts

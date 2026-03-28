@@ -1,14 +1,14 @@
 /* ─── Variables ─────────────────────────────── */
 :root {
   --bg:#07080f; --panel:#0d0e1c; --panel2:#0f1020; --border:#1c1e34; --border2:#25284050;
-  --text:#c4c9e8; --text-dim:#505578; --text-bright:#e8eaf6;
+  --text:#c4c9e8; --text-dim:#8890b8; --text-bright:#e8eaf6;
   --accent:#8b7cf8; --accent2:#67e8f9; --accent-glow:rgba(139,124,248,.15);
-  --radius:9px; --ui:'DM Mono',monospace;
+  --radius:9px; --ui:'DM Mono',monospace; --fg2:#8890b8;
 }
 body.light {
   --bg:#f0f2f8; --panel:#ffffff; --panel2:#e8eaf2; --border:#d0d3e8; --border2:#c8cbe080;
   --text:#3a3d60; --text-dim:#3d4050; --text-bright:#1a1d40;
-  --accent:#4e44a8; --accent2:#06b6d4; --accent-glow:rgba(107,92,231,.12);
+  --accent:#4e44a8; --accent2:#06b6d4; --accent-glow:rgba(107,92,231,.12); --fg2:#3d4050;
 }
 body.light select option { background:#ffffff; }
 body.light #preview-wrap { background-image: radial-gradient(circle at 25% 30%,rgba(107,92,231,.05),transparent 55%), radial-gradient(circle at 75% 70%,rgba(6,182,212,.04),transparent 55%); }
