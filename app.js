@@ -66,13 +66,19 @@ const TEXTURES = [
   { id: 'glitter',       name: 'Glitter',  preview: 'radial-gradient(circle at 20% 40%,#ff0 1px,transparent 2px),radial-gradient(circle at 60% 70%,#f0f 1px,transparent 2px),radial-gradient(circle at 80% 20%,#0ff 1px,transparent 2px),linear-gradient(135deg,#111,#333)' },
 ];
 
-const LANGUAGES = ['bash','c','csharp','cpp','css','dart','dockerfile','elixir','go','graphql','groovy','haskell','html','java','javascript','json','jsx','kotlin','lua','makefile','markdown','matlab','nginx','perl','php','powershell','python','r','ruby','rust','scala','scss','shell','sql','swift','toml','tsx','typescript','vim','xml','yaml'];
+const LANGUAGES = ['bash','c','cpp','csharp','css','dart','delphi','dockerfile','elixir','erlang','fsharp','go',
+  'graphql','groovy','haskell','html','ini','java','javascript','json','jsx','kotlin','latex','lisp','lua',
+  'makefile','markdown','matlab','nginx','objectivec','perl','php','powershell','python','r','ruby','rust','scala',
+  'scss','shell','sql','swift','toml','tsx','typescript','vbnet','vim','xml','yaml','1c'];
 
 const LANGUAGE_NAMES = {
   cpp:'C++', csharp:'C#', javascript:'JavaScript', typescript:'TypeScript',
   html:'HTML', css:'CSS', scss:'SCSS', json:'JSON', yaml:'YAML', toml:'TOML',
   sql:'SQL', php:'PHP', jsx:'JSX', tsx:'TSX', xml:'XML', graphql:'GraphQL',
   nginx:'NGINX', matlab:'MATLAB', powershell:'PowerShell', r:'R',
+  delphi:'Delphi', erlang:'Erlang', fsharp:'F#', ini:'INI',
+  latex:'LaTeX', lisp:'Lisp', objectivec:'Objective-C', vbnet:'VB.NET',
+  vim:'VimL', '1c':'1C',
 };
 
 const PLAIN_FONTS = [

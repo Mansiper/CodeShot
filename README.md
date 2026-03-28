@@ -25,6 +25,7 @@ No installs. No accounts. Just paste, style, and export.
 - **Trapezoid distortion** — warp the frame edges independently
 - **Gradient blur** — directional blur fade from any edge
 - **Filters** — B&W, Sepia, Cool, Warm, Faded, Vivid, Cinematic, Noir, Amber
+- **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter
 - **Drop shadow** with adjustable blur
 - **Selection highlight** with custom color and opacity
 - **Line numbers** toggle
