@@ -97,6 +97,7 @@ const DEFAULTS = {
   selectionOpacity: 25,
   zoom: 100,
   windowOpacity: 100,
+  plainTextAlign: 'left',
 };
 
 let state = { ...DEFAULTS };
@@ -350,13 +351,46 @@ function renderCode() {
       const no = String(li+1).padStart(String(lines.length).length, ' ');
       ctx.fillText(no, x, y); x += lineNoW;
     }
-    for (const t of lines[li]) {
+
+    const lineTokens = lines[li];
+
+    if (state.inputMode === 'text' && state.plainTextAlign !== 'left' && lineTokens.length > 0) {
+      const lineText = lineTokens.map(t => t.text).join('');
+      const lineW = ctx.measureText(lineText).width;
+      const xBase = x;
+      const availW = contentW - lineNoW;
+
+      if (state.plainTextAlign === 'center') {
+        x = xBase + (availW - lineW) / 2;
+      } else if (state.plainTextAlign === 'right') {
+        x = xBase + availW - lineW;
+      } else if (state.plainTextAlign === 'justify') {
+        const isLastLine = li === lines.length - 1;
+        const words = lineText.split(' ');
+        if (!isLastLine && words.length > 1) {
+          const noSpaceW = ctx.measureText(words.join('')).width;
+          const spaceW = (availW - noSpaceW) / (words.length - 1);
+          let jx = xBase;
+          ctx.fillStyle = lineTokens[0].color;
+          for (let wi = 0; wi < words.length; wi++) {
+            ctx.fillText(words[wi], jx, y);
+            jx += ctx.measureText(words[wi]).width + (wi < words.length - 1 ? spaceW : 0);
+          }
+          y += lh;
+          continue;
+        }
+        // last line or single word: left-align (x stays at xBase)
+      }
+    }
+
+    for (const t of lineTokens) {
       ctx.fillStyle = t.color;
       ctx.fillText(t.text, x, y);
       x += ctx.measureText(t.text).width;
     }
     y += lh;
   }
+  
   return off;
 }
 
@@ -763,6 +797,7 @@ function syncUI() {
   }
   document.getElementById('plain-text-color').value = state.plainTextColor;
   document.getElementById('plain-text-bg').value    = state.plainTextBg;
+  document.querySelectorAll('#plain-align-group .toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.val === state.plainTextAlign));
 
   // Background
   document.querySelectorAll('#bg-type-group .toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.val===state.bgType));
@@ -924,6 +959,10 @@ function bindEvents() {
   document.getElementById('gblur-dir-group').addEventListener('click', e => {
     const b = e.target.closest('.toggle-btn'); if (!b) return;
     change('gradBlurDir', b.dataset.val); syncUI();
+  });
+  document.getElementById('plain-align-group').addEventListener('click', e => {
+    const b = e.target.closest('.toggle-btn'); if (!b) return;
+    change('plainTextAlign', b.dataset.val); syncUI();
   });
 
   // Chrome style
