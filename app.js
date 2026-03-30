@@ -1453,6 +1453,10 @@ function bindEvents() {
     scheduleRender();
     scheduleSave();
   });
+  document.getElementById('lineno-color-auto').addEventListener('click', () => {
+    change('lineNumberColor', '');
+    document.getElementById('lineno-color').value = '#888888';
+  });
 
   // Dropdown toggles
   ['export','copy'].forEach(id => {
