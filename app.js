@@ -102,7 +102,8 @@ const DEFAULTS = {
   bgType:'gradient', bgSolid:'#1a1b2e', gradC1:'#0f0c29', gradC2:'#302b63', gradAngle:135,
   outerPadding:56, innerPadding:40, cornerRadius:14,
   chromeStyle:'macos',
-  showLineNumbers:false, showShadow:true, shadowBlur:30,
+  showLineNumbers:false, firstLineNumber:1, lineNumberColor:'',
+  showShadow:true, shadowBlur:30,
   tiltAngle:0, depthAngle:0, depthAngleY:0,
   trapLeft:100, trapRight:100, trapTop:100, trapBottom:100,
   gradBlur:false, gradBlurDir:'bottom', gradBlurAmount:20, gradBlurStart:30,
@@ -368,8 +369,8 @@ function renderCode() {
   for (let li = 0; li < lines.length; li++) {
     let x = innerPadding;
     if (showLineNumbers) {
-      ctx.fillStyle = adjust(theme.fg, -60);
-      const no = String(li+1).padStart(String(lines.length).length, ' ');
+      ctx.fillStyle = state.lineNumberColor || adjust(theme.fg, -60);
+      const no = String(li + state.firstLineNumber).padStart(String(lines.length + state.firstLineNumber - 1).length, ' ');
       ctx.fillText(no, x, y); x += lineNoW;
     }
 
@@ -1200,6 +1201,9 @@ function syncUI() {
   setRange('corner-radius', state.cornerRadius, 'corner-val', v=>v+'px');
   document.querySelectorAll('.chrome-btn').forEach(b => b.classList.toggle('active', b.dataset.style===state.chromeStyle));
   setSwitch('lineno-switch', state.showLineNumbers);
+  document.getElementById('lineno-sub').style.display = state.showLineNumbers ? '' : 'none';
+  document.getElementById('first-line-number').value = state.firstLineNumber;
+  document.getElementById('lineno-color').value = state.lineNumberColor || '#888888';
   setSwitch('shadow-switch', state.showShadow);
   setRange('shadow-blur', state.shadowBlur, 'shadow-blur-val', v=>v+'px');
   setRange('zoom', state.zoom, 'zoom-val', v => v + '%');
@@ -1409,6 +1413,7 @@ function bindEvents() {
     document.getElementById(id).addEventListener('click', () => {
       change(key, !state[key]); setSwitch(id, state[key]);
       if (key==='gradBlur') { document.getElementById('gblur-controls').style.opacity = state.gradBlur?'1':'0.35'; }
+      if (key==='showLineNumbers') { document.getElementById('lineno-sub').style.display = state.showLineNumbers ? '' : 'none'; }
     });
   }
   bindSwitch('lineno-switch','showLineNumbers');
@@ -1419,6 +1424,12 @@ function bindEvents() {
     setSwitch('watermark-switch', showWatermark);
     scheduleRender();
   });
+
+  // Inputs
+  document.getElementById('first-line-number').addEventListener('input', e => {
+    change('firstLineNumber', Math.max(0, parseInt(e.target.value) || 0));
+  });
+  document.getElementById('lineno-color').addEventListener('input', e => change('lineNumberColor', e.target.value));
 
   // Buttons
   document.getElementById('export-btn').addEventListener('click', () => exportAs('png'));

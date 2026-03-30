@@ -28,7 +28,7 @@ No installs. No accounts. Just paste, style, and export.
 - **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter
 - **Drop shadow** with adjustable blur
 - **Selection highlight** with custom color and opacity
-- **Line numbers** toggle
+- **Line numbers** toggle with configurable first line number and font color
 - **Zoom** from 50% to 300%
 - **Window opacity**
 - **Copy to clipboard** or **Export** to one of 5 formats
