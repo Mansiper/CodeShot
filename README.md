@@ -21,6 +21,8 @@ No installs. No accounts. Just paste, style, and export.
 - **Plain text mode** with custom font and color picker
 - **Backgrounds** — solid color, animated gradient (10 presets + custom), or transparent PNG
 - **Window chrome** — macOS, Windows, GNOME, or none
+- **Window title** — set a custom title displayed in the window chrome
+- **Window offset** — adjust X/Y position of the window within the frame
 - **3D transform** — rotate Z, depth X/Y perspective
 - **Trapezoid distortion** — warp the frame edges independently
 - **Gradient blur** — directional blur fade from any edge
@@ -64,3 +66,9 @@ No installs. No accounts. Just paste, style, and export.
 ## License
 
 [MIT](https://github.com/Mansiper/CodeShot/blob/master/LICENSE)
+
+---
+
+## Development
+
+This service is 99.9% vibecoded. My code is much more beautiful and readable.

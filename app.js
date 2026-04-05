@@ -101,10 +101,11 @@ const DEFAULTS = {
   theme:'one-dark',
   bgType:'gradient', bgSolid:'#1a1b2e', gradC1:'#0f0c29', gradC2:'#302b63', gradAngle:135,
   outerPadding:56, innerPadding:40, cornerRadius:14,
-  chromeStyle:'macos',
+  chromeStyle:'macos', windowTitle: 'code',
   showLineNumbers:false, firstLineNumber:1, lineNumberColor:'',
   showShadow:true, shadowBlur:30,
   tiltAngle:0, depthAngle:0, depthAngleY:0,
+  windowOffsetX: 0, windowOffsetY: 0,
   trapLeft:100, trapRight:100, trapTop:100, trapBottom:100,
   gradBlur:false, gradBlurDir:'bottom', gradBlurAmount:20, gradBlurStart:30,
   filter: 'none',
@@ -221,7 +222,20 @@ function getChromeHeight(style, fontSize) {
   return style === 'none' ? 0 : Math.round(fontSize * 2.3);
 }
 
-function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style) {
+function truncateText(ctx, text, maxWidth) {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let lo = 0, hi = text.length;
+  const ellipsis = '…';
+  const ellW = ctx.measureText(ellipsis).width;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (ctx.measureText(text.slice(0, mid)).width + ellW <= maxWidth) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo === 0 ? '' : text.slice(0, lo) + ellipsis;
+}
+
+function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
   if (style === 'none' || chromeH === 0) return;
   const dark = isDark(theme.bg);
   const barBg = dark ? adjust(theme.bg, 18) : adjust(theme.bg, -12);
@@ -247,7 +261,10 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style) {
     ctx.fillStyle = dark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.55)';
     ctx.font = `${Math.round(fontSize*0.72)}px "Segoe UI",Arial,sans-serif`;
     ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
-    ctx.fillText('code', pad, cy + 0.5);
+    const bW2 = Math.round(chromeH * 1.55);
+    const maxTitleW = totalW - bW2 * 3 - pad * 2 - 8;
+    const titleText2 = truncateText(ctx, title || 'code', maxTitleW);
+    ctx.fillText(titleText2, pad, cy + 0.5);
     // 3 buttons: –  □  ✕
     const bW = Math.round(chromeH * 1.55);
     [{icon:'−',close:false},{icon:'□',close:false},{icon:'✕',close:true}].forEach((b,i) => {
@@ -265,7 +282,13 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style) {
     ctx.fillStyle = dark ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)';
     ctx.font = `${Math.round(fontSize*0.72)}px "Ubuntu","Cantarell",Arial,sans-serif`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('code.js', totalW/2, cy);
+    const r2 = Math.max(5, Math.round(fontSize * 0.38));
+    const cr2 = Math.max(5, Math.round(fontSize * 0.4));
+    const leftEdge = pad + r2 * 2 + 5 + r2 + 5;
+    const rightEdge = totalW - pad - cr2 * 2;
+    const maxGnomeW = rightEdge - leftEdge;
+    const gnomeTitle = truncateText(ctx, title || 'code.js', maxGnomeW);
+    ctx.fillText(gnomeTitle, totalW/2, cy);
     ctx.textAlign = 'left';
     // Left: 2 neutral dots (minimize/maximize)
     const r = Math.max(5, Math.round(fontSize * 0.38));
@@ -333,7 +356,7 @@ function renderCode() {
   ctx.fillRect(0,0,totalW,totalH);
 
   // Chrome
-  drawChrome(ctx, totalW, chromeH, theme, fontSize, innerPadding, chromeStyle);
+  drawChrome(ctx, totalW, chromeH, theme, fontSize, innerPadding, chromeStyle, state.windowTitle);
 
   // Selection highlight
   if (selectionRange && selectionRange.start !== selectionRange.end) {
@@ -796,7 +819,12 @@ function doRender() {
   const rY  = state.depthAngleY * Math.PI/180;
   const {trapLeft: tL, trapRight: tR, trapTop: tT, trapBottom: tBot} = state;
 
-  const corners = computeCorners(iw, ih, cW, cH, tZ, rX, rY, tL, tR, tT, tBot);
+  let corners = computeCorners(iw, ih, cW, cH, tZ, rX, rY, tL, tR, tT, tBot);
+  const oxPx = state.windowOffsetX / 100 * iw;
+  const oyPx = state.windowOffsetY / 100 * ih;
+  if (oxPx !== 0 || oyPx !== 0) {
+    corners = corners.map(c => ({x: c.x + oxPx, y: c.y + oyPx}));
+  }
 
   // Shadow
   if (state.showShadow) {
@@ -816,7 +844,7 @@ function doRender() {
   ctx.save();
   ctx.globalAlpha = state.windowOpacity / 100;
   if (isFlat) {
-    ctx.drawImage(off, op + (baseW - iw) / 2, op + (baseH - ih) / 2);
+    ctx.drawImage(off, op + (baseW - iw) / 2 + oxPx, op + (baseH - ih) / 2 + oyPx);
   } else {
     drawIntoQuad(ctx, off, corners);
   }
@@ -1200,6 +1228,9 @@ function syncUI() {
   setRange('inner-padding', state.innerPadding, 'inner-padding-val', v=>v+'px');
   setRange('corner-radius', state.cornerRadius, 'corner-val', v=>v+'px');
   document.querySelectorAll('.chrome-btn').forEach(b => b.classList.toggle('active', b.dataset.style===state.chromeStyle));
+  const titleSupported = state.chromeStyle === 'windows' || state.chromeStyle === 'gnome';
+  document.getElementById('window-title-wrap').style.display = titleSupported ? '' : 'none';
+  document.getElementById('window-title').value = state.windowTitle || '';
   setSwitch('lineno-switch', state.showLineNumbers);
   document.getElementById('lineno-sub').style.display = state.showLineNumbers ? '' : 'none';
   document.getElementById('first-line-number').value = state.firstLineNumber;
@@ -1208,6 +1239,8 @@ function syncUI() {
   setRange('shadow-blur', state.shadowBlur, 'shadow-blur-val', v=>v+'px');
   setRange('zoom', state.zoom, 'zoom-val', v => v + '%');
   setRange('window-opacity', state.windowOpacity, 'window-opacity-val', v => v + '%');
+  setRange('window-offset-x', state.windowOffsetX, 'window-offset-x-val', v => v + '%');
+  setRange('window-offset-y', state.windowOffsetY, 'window-offset-y-val', v => v + '%');
 
   // 3D
   setRange('tilt-angle', state.tiltAngle, 'tilt-val', v=>v+'°');
@@ -1337,6 +1370,8 @@ function bindEvents() {
   bindR('gblur-start','gradBlurStart','gblur-start-val',v=>v+'%');
   bindR('zoom', 'zoom', 'zoom-val', v => v + '%');
   bindR('window-opacity', 'windowOpacity', 'window-opacity-val', v => v + '%');
+  bindR('window-offset-x', 'windowOffsetX', 'window-offset-x-val', v => v + '%');
+  bindR('window-offset-y', 'windowOffsetY', 'window-offset-y-val', v => v + '%');
 
   // Colors
   document.getElementById('bg-solid-color').addEventListener('input', e => change('bgSolid', e.target.value));
@@ -1364,6 +1399,9 @@ function bindEvents() {
   document.getElementById('chrome-grid').addEventListener('click', e => {
     const b = e.target.closest('.chrome-btn'); if (!b) return;
     change('chromeStyle', b.dataset.style); syncUI();
+  });
+  document.getElementById('window-title').addEventListener('input', e => {
+    change('windowTitle', e.target.value);
   });
 
   // Mode switcher

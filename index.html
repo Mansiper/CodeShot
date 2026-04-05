@@ -224,6 +224,14 @@
           <input type="range" id="zoom" min="50" max="300" step="5">
         </div>
         <div class="field">
+          <div class="field-label">Offset X <span class="field-value" id="window-offset-x-val"></span></div>
+          <input type="range" id="window-offset-x" min="-100" max="100" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Offset Y <span class="field-value" id="window-offset-y-val"></span></div>
+          <input type="range" id="window-offset-y" min="-100" max="100" step="1">
+        </div>
+        <div class="field">
           <div class="field-label">Inner Padding <span class="field-value" id="inner-padding-val"></span></div>
           <input type="range" id="inner-padding" min="8" max="100" step="2">
         </div>
@@ -234,6 +242,10 @@
         <div class="field">
           <div class="field-label">Window Style</div>
           <div class="chrome-grid" id="chrome-grid"></div>
+        </div>
+        <div class="field" id="window-title-wrap" style="display:none">
+          <div class="field-label">Window Title</div>
+          <input type="text" id="window-title" placeholder="e.g. code.js" maxlength="100" style="width:100%;box-sizing:border-box">
         </div>
         <div class="field" style="margin-top:10px">
           <label class="switch" id="lineno-switch">
