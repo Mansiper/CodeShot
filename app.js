@@ -41,16 +41,26 @@ const CHROME_STYLES = [
 ];
 
 const FILTERS = [
-  { id: 'none',      name: 'None',      preview: 'linear-gradient(135deg,#444,#888)' },
-  { id: 'bw',        name: 'B&W',       preview: 'linear-gradient(135deg,#111,#eee)' },
-  { id: 'sepia',     name: 'Sepia',     preview: 'linear-gradient(135deg,#704214,#c8a87a)' },
-  { id: 'cool',      name: 'Cool',      preview: 'linear-gradient(135deg,#1a3a5c,#6ab0d8)' },
-  { id: 'warm',      name: 'Warm',      preview: 'linear-gradient(135deg,#7c2b00,#f5a623)' },
-  { id: 'faded',     name: 'Faded',     preview: 'linear-gradient(135deg,#aaa,#ccc)' },
-  { id: 'vivid',     name: 'Vivid',     preview: 'linear-gradient(135deg,#ff0080,#00ff80)' },
-  { id: 'cinematic', name: 'Cinematic', preview: 'linear-gradient(135deg,#1a0000,#8b7355)' },
-  { id: 'noir',      name: 'Noir',      preview: 'linear-gradient(135deg,#000,#222)' },
-  { id: 'amber',     name: 'Amber',     preview: 'linear-gradient(135deg,#3d1c00,#ff8c00)' },
+  { id: 'none',        name: 'None',        preview: 'linear-gradient(135deg,#444,#888)' },
+  { id: 'bw',          name: 'B&W',         preview: 'linear-gradient(135deg,#111,#eee)' },
+  { id: 'sepia',       name: 'Sepia',       preview: 'linear-gradient(135deg,#704214,#c8a87a)' },
+  { id: 'cool',        name: 'Cool',        preview: 'linear-gradient(135deg,#1a3a5c,#6ab0d8)' },
+  { id: 'warm',        name: 'Warm',        preview: 'linear-gradient(135deg,#7c2b00,#f5a623)' },
+  { id: 'faded',       name: 'Faded',       preview: 'linear-gradient(135deg,#aaa,#ccc)' },
+  { id: 'vivid',       name: 'Vivid',       preview: 'linear-gradient(135deg,#ff0080,#00ff80)' },
+  { id: 'cinematic',   name: 'Cinematic',   preview: 'linear-gradient(135deg,#1a0000,#8b7355)' },
+  { id: 'noir',        name: 'Noir',        preview: 'linear-gradient(135deg,#000,#222)' },
+  { id: 'amber',       name: 'Amber',       preview: 'linear-gradient(135deg,#3d1c00,#ff8c00)' },
+  { id: 'mint',        name: 'Mint',        preview: 'linear-gradient(135deg,#1a3d2e,#5ecfb0)' },
+  { id: 'dusk',        name: 'Dusk',        preview: 'linear-gradient(135deg,#3b1f5e,#e8608a)' },
+  { id: 'retro',       name: 'Retro',       preview: 'linear-gradient(135deg,#7a4e2d,#c9a96e)' },
+  { id: 'neon',        name: 'Neon',        preview: 'linear-gradient(135deg,#ff00cc,#00ffcc)' },
+  { id: 'lofi',        name: 'Lo-Fi',       preview: 'linear-gradient(135deg,#2e1a00,#c88c3a)' },
+  { id: 'bleach',      name: 'Bleach',      preview: 'linear-gradient(135deg,#999,#eee)' },
+  { id: 'ice',         name: 'Ice',         preview: 'linear-gradient(135deg,#a8d8f0,#e8f6ff)' },
+  { id: 'overexposed', name: 'Overexp...',  preview: 'linear-gradient(135deg,#ddd,#fff)' },
+  { id: 'darkroom',    name: 'Dark Room',   preview: 'linear-gradient(135deg,#000,#1a1a1a)' },
+  { id: 'dreamy',      name: 'Dreamy',      preview: 'linear-gradient(135deg,#c8b4e0,#f0e6ff)' },
 ];
 
 const TEXTURES = [
@@ -64,6 +74,16 @@ const TEXTURES = [
   { id: 'carbon',        name: 'Carbon',   preview: 'repeating-linear-gradient(45deg,#111 0px,#333 4px,#111 8px)' },
   { id: 'scanlines',     name: 'Scanlines',preview: 'repeating-linear-gradient(180deg,rgba(0,0,0,.35) 0px,rgba(0,0,0,.35) 1px,transparent 1px,transparent 2px)' },
   { id: 'glitter',       name: 'Glitter',  preview: 'radial-gradient(circle at 20% 40%,#ff0 1px,transparent 2px),radial-gradient(circle at 60% 70%,#f0f 1px,transparent 2px),radial-gradient(circle at 80% 20%,#0ff 1px,transparent 2px),linear-gradient(135deg,#111,#333)' },
+  { id: 'noise',         name: 'Noise',     preview: 'linear-gradient(135deg,#1a1a1a,#555)' },
+  { id: 'dots',          name: 'Dots',      preview: 'radial-gradient(circle,#fff 1px,transparent 1px)' },
+  { id: 'grid',          name: 'Grid',      preview: 'linear-gradient(#555 1px,transparent 1px),linear-gradient(90deg,#555 1px,transparent 1px)' },
+  { id: 'diagonal',      name: 'Diagonal',  preview: 'repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,.15) 5px)' },
+  { id: 'crosshatch',    name: 'Crosshatch',preview: 'repeating-linear-gradient(45deg,rgba(255,255,255,.08) 0,rgba(255,255,255,.08) 1px,transparent 0,transparent 50%),repeating-linear-gradient(-45deg,rgba(255,255,255,.08) 0,rgba(255,255,255,.08) 1px,transparent 0,transparent 50%)' },
+  { id: 'hex',           name: 'Hex',       preview: 'linear-gradient(135deg,#1a2a1a,#3a5a3a)' },
+  { id: 'concrete',      name: 'Concrete',  preview: 'linear-gradient(135deg,#555,#888)' },
+  { id: 'denim',         name: 'Denim',     preview: 'repeating-linear-gradient(30deg,#1a2a4a,#1a2a4a 4px,#243560 4px,#243560 8px)' },
+  { id: 'vignette',      name: 'Vignette',  preview: 'radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.8) 100%)' },
+  { id: 'frosted',       name: 'Frosted',   preview: 'linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05))' },
 ];
 
 const LANGUAGES = ['bash','csharp','c','cpp','css','dart','pascal','dockerfile','elixir','erlang','fsharp','go',
@@ -575,6 +595,16 @@ function buildFilterString(filterId, intensity) {
     case 'cinematic': return `contrast(${adj(1.30)}) saturate(${adj(0.80)}) brightness(${adj(0.90)})`;
     case 'noir':      return `grayscale(${gs(1)}) contrast(${adj(1.50)})`;
     case 'amber':     return `sepia(${gs(0.70)}) saturate(${adj(1.50)}) hue-rotate(${deg(-10)}deg) brightness(${adj(0.95)})`;
+    case 'mint':        return `hue-rotate(${deg(150)}deg) saturate(${adj(0.55)}) brightness(${adj(1.05)})`;
+    case 'dusk':        return `hue-rotate(${deg(-40)}deg) saturate(${adj(1.30)}) brightness(${adj(0.90)})`;
+    case 'retro':       return `sepia(${gs(0.40)}) contrast(${adj(0.85)}) brightness(${adj(1.10)}) saturate(${adj(0.80)}) hue-rotate(${deg(-10)}deg)`;
+    case 'neon':        return `saturate(${adj(3.00)}) contrast(${adj(1.50)})`;
+    case 'lofi':        return `contrast(${adj(1.40)}) saturate(${adj(1.20)}) hue-rotate(${deg(-10)}deg)`;
+    case 'bleach':      return `grayscale(${gs(0.50)}) contrast(${adj(1.80)}) brightness(${adj(1.10)}) saturate(${adj(0.30)})`;
+    case 'ice':         return `hue-rotate(${deg(180)}deg) saturate(${adj(0.70)}) brightness(${adj(1.30)})`;
+    case 'overexposed': return `brightness(${adj(1.80)}) contrast(${adj(0.80)})`;
+    case 'darkroom':    return `brightness(${adj(0.60)}) contrast(${adj(1.80)})`;
+    case 'dreamy':      return `brightness(${adj(1.20)}) contrast(${adj(0.75)}) saturate(${adj(0.90)}) blur(${(t*1.5).toFixed(1)}px)`;
     default:          return 'none';
   }
 }
@@ -766,6 +796,161 @@ function applyTexture(ctx, cW, cH, textureId, intensity) {
         ctx.arc(x, y, sz, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.restore();
+      break;
+    }
+
+        case 'noise': {
+      const tile = noiseTile(128, 128, 128, 128, 120);
+      const pat = ctx.createPattern(tile, 'repeat');
+      ctx.save();
+      ctx.globalCompositeOperation = 'overlay';
+      ctx.globalAlpha = a * 0.35;
+      ctx.fillStyle = pat;
+      ctx.fillRect(0, 0, cW, cH);
+      ctx.restore();
+      break;
+    }
+
+    case 'dots': {
+      const spacing = 10;
+      const r = 1;
+      ctx.save();
+      ctx.globalAlpha = a * 0.35;
+      ctx.fillStyle = '#fff';
+      for (let y = spacing / 2; y < cH; y += spacing) {
+        for (let x = spacing / 2; x < cW; x += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'grid': {
+      const spacing = 20;
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = a * 0.15;
+      for (let y = 0; y <= cH; y += spacing) {
+        ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(cW, y + 0.5); ctx.stroke();
+      }
+      for (let x = 0; x <= cW; x += spacing) {
+        ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, cH); ctx.stroke();
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'diagonal': {
+      const gap = 10;
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 0.75;
+      ctx.globalAlpha = a * 0.18;
+      for (let i = -cH; i < cW + cH; i += gap) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + cH, cH);
+        ctx.stroke();
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'crosshatch': {
+      const gap = 12;
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 0.6;
+      ctx.globalAlpha = a * 0.14;
+      for (let i = -cH; i < cW + cH; i += gap) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + cH, cH); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(i + cH, 0); ctx.lineTo(i, cH); ctx.stroke();
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'hex': {
+      const size = 14;
+      const w = size * 2;
+      const h = Math.sqrt(3) * size;
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 0.7;
+      ctx.globalAlpha = a * 0.2;
+      for (let row = -1; row * h < cH + h; row++) {
+        for (let col = -1; col * w * 0.75 < cW + w; col++) {
+          const cx2 = col * w * 0.75;
+          const cy2 = row * h + (col % 2 === 0 ? 0 : h / 2);
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = Math.PI / 180 * (60 * i - 30);
+            const px = cx2 + size * Math.cos(angle);
+            const py = cy2 + size * Math.sin(angle);
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+      break;
+    }
+
+    case 'concrete': {
+      const tile = noiseTile(128, 140, 135, 130, 180);
+      const pat = ctx.createPattern(tile, 'repeat');
+      ctx.save();
+      ctx.globalCompositeOperation = 'overlay';
+      ctx.globalAlpha = a * 0.5;
+      ctx.fillStyle = pat;
+      ctx.fillRect(0, 0, cW, cH);
+      ctx.restore();
+      break;
+    }
+
+    case 'denim': {
+      const ts = 6;
+      const tile = document.createElement('canvas');
+      tile.width = ts; tile.height = ts;
+      const tc = tile.getContext('2d');
+      tc.fillStyle = 'rgba(30,50,90,1)';
+      tc.fillRect(0, 0, ts, ts);
+      tc.strokeStyle = 'rgba(255,255,255,0.18)';
+      tc.lineWidth = 1;
+      tc.beginPath(); tc.moveTo(0, ts); tc.lineTo(ts, 0); tc.stroke();
+      patternFill(tile, a * 0.55);
+      break;
+    }
+
+    case 'vignette': {
+      ctx.save();
+      const rg = ctx.createRadialGradient(cW/2, cH/2, Math.min(cW,cH)*0.25, cW/2, cH/2, Math.max(cW,cH)*0.75);
+      rg.addColorStop(0,   'rgba(0,0,0,0)');
+      rg.addColorStop(1,   `rgba(0,0,0,${a * 0.75})`);
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, cW, cH);
+      ctx.restore();
+      break;
+    }
+
+    case 'frosted': {
+      ctx.save();
+      ctx.globalAlpha = a * 0.12;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, cW, cH);
+      const fg = ctx.createLinearGradient(0, 0, cW, cH);
+      fg.addColorStop(0,   `rgba(255,255,255,${a * 0.15})`);
+      fg.addColorStop(0.5, `rgba(255,255,255,${a * 0.04})`);
+      fg.addColorStop(1,   `rgba(255,255,255,${a * 0.10})`);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = fg;
+      ctx.fillRect(0, 0, cW, cH);
       ctx.restore();
       break;
     }
