@@ -91,6 +91,17 @@
     <aside id="settings-panel">
 
       <div class="section">
+        <div class="section-title">Presets</div>
+        <div id="presets-list" style="margin-bottom:8px"></div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="text" id="preset-name-input" placeholder="Preset name…" maxlength="40"
+            style="flex:1;box-sizing:border-box">
+          <button class="btn btn-primary" id="save-preset-btn"
+            style="padding:4px 10px;font-size:11px;flex-shrink:0">Save</button>
+        </div>
+      </div>
+
+      <div class="section">
         <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">Parameters
           <button class="btn" id="reset-params-btn" style="padding:3px 9px;font-size:10px">Reset</button>
         </div>

@@ -6,6 +6,7 @@
 
 const STORAGE_KEY  = 'codeshot';
 const SPLIT_KEY    = 'codeshot_split';
+const PRESETS_KEY  = 'codeshot_presets';
 const SAVE_DELAY   = 1000;
 const UI_THEME_KEY = 'codeshot_ui_theme';
 const MAX_LINES    = 30;
@@ -1319,6 +1320,69 @@ function loadState() {
   } catch(e) {}
 }
 
+function getPresets() {
+  try { return JSON.parse(localStorage.getItem(PRESETS_KEY) || '{}'); } catch(e) { return {}; }
+}
+
+function savePreset(name) {
+  if (!name.trim()) return;
+  const presets = getPresets();
+  presets[name.trim()] = { ...state };
+  try { localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); } catch(e) {}
+  renderPresetsList();
+}
+
+function applyPreset(name) {
+  const presets = getPresets();
+  if (!presets[name]) return;
+  const code = state.code; // keep current code, or remove this line to restore code too
+  state = { ...DEFAULTS, ...presets[name], code };
+  tokCache = null;
+  syncUI();
+  scheduleRender();
+  scheduleSave();
+}
+
+function deletePreset(name) {
+  const presets = getPresets();
+  delete presets[name];
+  try { localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); } catch(e) {}
+  renderPresetsList();
+}
+
+function renderPresetsList() {
+  const container = document.getElementById('presets-list');
+  if (!container) return;
+  const presets = getPresets();
+  const names = Object.keys(presets);
+  container.innerHTML = '';
+  if (names.length === 0) {
+    container.innerHTML = '<div style="font-size:11px;opacity:.45;padding:4px 0">No saved presets yet</div>';
+    return;
+  }
+  for (const name of names) {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:5px';
+    const label = document.createElement('button');
+    label.className = 'btn';
+    label.style.cssText = 'flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;padding:4px 8px';
+    label.textContent = name;
+    label.title = `Load "${name}"`;
+    label.addEventListener('click', () => applyPreset(name));
+    const del = document.createElement('button');
+    del.className = 'btn';
+    del.style.cssText = 'padding:4px 7px;font-size:11px;color:#e06c75;flex-shrink:0';
+    del.textContent = '✕';
+    del.title = `Delete "${name}"`;
+    del.addEventListener('click', () => {
+      if (confirm(`Delete preset "${name}"?`)) deletePreset(name);
+    });
+    row.appendChild(label);
+    row.appendChild(del);
+    container.appendChild(row);
+  }
+}
+
 /* ════════════════════════════════════════════
    EDITOR CODE THEME
 ════════════════════════════════════════════ */
@@ -1494,6 +1558,20 @@ function bindEvents() {
       clearTimeout(codeTimer);
       codeTimer = setTimeout(() => changeCode(e.target.value), 80);
   });
+
+  // Presets
+  document.getElementById('save-preset-btn').addEventListener('click', () => {
+    const input = document.getElementById('preset-name-input');
+    savePreset(input.value);
+    input.value = '';
+  });
+  document.getElementById('preset-name-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      savePreset(e.target.value);
+      e.target.value = '';
+    }
+  });
+
   // Selection → highlight in canvas
   function updateSelectionRange() {
     const el = document.getElementById('code-input');
@@ -1865,6 +1943,7 @@ async function init() {
   initResize();
   try { await document.fonts.ready; } catch(e) {}
   scheduleRender();
+  renderPresetsList();
 }
 
 document.addEventListener('DOMContentLoaded', init);

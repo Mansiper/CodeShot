@@ -35,6 +35,7 @@ No installs. No accounts. Just paste, style, and export.
 - **Window opacity**
 - **Copy to clipboard** or **Export** to one of 5 formats
 - **Settings auto-saved** to `localStorage` — your config persists across sessions
+- **Settings presets** — save current settings under a name, load or delete saved presets
 - **Light/dark UI** toggle
 - **Resizable** editor/preview split pane
 - Zero dependencies, zero backend — runs entirely in the browser
