@@ -6,7 +6,7 @@
 
 No installs. No accounts. Just paste, style, and export.
 
-[**Try it live**](https://mansiper.github.io/CodeShot/) &nbsp;·&nbsp; [Node.js API](nodejs/README.md) &nbsp;·&nbsp; [Support the project ☕](https://buymeacoffee.com/mansiper)
+[**Try it live**](https://mansiper.github.io/CodeShot/) &nbsp;·&nbsp; [Node.js API](https://github.com/Mansiper/CodeShot/tree/master/NodeJS) &nbsp;·&nbsp; [Support the project ☕](https://buymeacoffee.com/mansiper)
 
 Node.js API: [https://codeshot-u1ol.onrender.com](https://codeshot-u1ol.onrender.com)
 

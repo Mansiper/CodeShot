@@ -5,11 +5,12 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "postinstall": "puppeteer browsers install chrome"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "puppeteer": "^22.0.0"
+    "express": "^5.2.1",
+    "puppeteer": "^24.42.0"
   },
   "engines": {
     "node": ">=18"
