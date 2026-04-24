@@ -1,0 +1,231 @@
+# CodeShot — Node.js API Server
+
+An HTTP API that renders [CodeShot](https://github.com/Mansiper/CodeShot) screenshots server-side and returns a binary image. Send your code as a plain-text POST body, get a PNG/JPG/GIF/TIFF/Base64 image back — perfect for CI pipelines, bots, or any automation.
+
+**Hosted at: [https://codeshot-u1ol.onrender.com](https://codeshot-u1ol.onrender.com)**
+
+---
+
+## Requirements
+
+- Node.js ≥ 18
+- The web assets (`index.html`, `app.js`, `css.css`) must be present in the **parent directory** (the repo root). The server serves them automatically.
+
+---
+
+## Setup
+
+```bash
+cd nodejs
+npm install
+node server.js
+```
+
+The server starts on port **3000** by default. Override with the `PORT` environment variable:
+
+```bash
+PORT=8080 node server.js
+```
+
+---
+
+## Endpoint
+
+### `POST /`
+
+| | |
+|---|---|
+| **Body** | Source code (or plain text) as `text/plain` |
+| **Params** | All options via query string (see table below) |
+| **Response** | Binary image (`Content-Type: image/png` etc.) or `text/plain` Base64 data-URL |
+
+---
+
+## curl Examples
+
+Replace `https://codeshot-u1ol.onrender.com` with `http://localhost:3000` if running locally.
+
+```bash
+# Basic — JavaScript, Dracula theme, PNG output
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=javascript&theme=dracula&img_format=png" \
+     -H "Content-Type: text/plain" \
+     --data-binary "@script.js" \
+     -o screenshot.png
+
+# Python, Monokai, Windows chrome, JPG
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=monokai&chrome=windows&img_format=jpg" \
+     -d "print('hello world')" \
+     -o screenshot.jpg
+
+# Rust, Nord, solid background, Cool filter, PNG
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=rust&theme=nord&bg=solid&bg_color=1a1b2e&filter=cool&img_format=png" \
+     --data-binary "@main.rs" \
+     -o screenshot.png
+
+# C#, GitHub Dark, line numbers, GNOME chrome, TIFF
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=csharp&theme=github-dark&line_numbers=true&chrome=gnome&img_format=tiff" \
+     --data-binary "@Program.cs" \
+     -o screenshot.tiff
+
+# SQL, perspective depth, custom gradient, GIF
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=sql&depth=12&grad_c1=141e30&grad_c2=243b55&img_format=gif" \
+     -d "SELECT * FROM users WHERE active = 1;" \
+     -o screenshot.gif
+
+# Base64 data-URL (returned as plain text)
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=base64" \
+     --data-binary "@index.ts"
+```
+
+---
+
+## All Parameters
+
+### Content
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `mode` | string | `code` | `code` — syntax-highlighted · `text` — plain text |
+| `lang` | string | `javascript` | Syntax language (see list below) |
+
+### Typography
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `font` | string | `JetBrains_Mono` | Code font. Underscores become spaces (`Ubuntu_Mono` → `Ubuntu Mono`) |
+| `size` | number | `14` | Font size in px |
+| `line_height` | number | `1.6` | Line-height multiplier |
+
+### Theme & Colors
+
+| Param | Type | Default | Values |
+|---|---|---|---|
+| `theme` | string | `one-dark` | `one-dark` `monokai` `dracula` `nord` `tokyo-night` `github-dark` `github-light` `solarized` |
+
+### Background
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `bg` | string | `gradient` | `gradient` · `solid` · `none` (transparent PNG) |
+| `bg_color` | hex | `1a1b2e` | Solid color — no `#` (used when `bg=solid`) |
+| `grad_c1` | hex | `0f0c29` | Gradient start color |
+| `grad_c2` | hex | `302b63` | Gradient end color |
+| `grad_angle` | number | `135` | Gradient angle in degrees |
+
+### Layout
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `outer_pad` | number | `56` | Outer padding — gap between window and image edge |
+| `inner_pad` | number | `40` | Inner padding — gap between code and window edge |
+| `radius` | number | `14` | Window corner radius in px |
+
+### Window Chrome
+
+| Param | Type | Default | Values |
+|---|---|---|---|
+| `chrome` | string | `macos` | `macos` `windows` `gnome` `none` |
+| `title` | string | `code` | Text shown in the title bar |
+
+### Shadow
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `shadow` | bool | `true` | Show drop shadow |
+| `shadow_blur` | number | `30` | Shadow blur radius in px |
+
+### Line Numbers
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `line_numbers` | bool | `false` | Show line numbers |
+| `first_line` | number | `1` | Number of the first line |
+| `line_num_color` | hex | *(auto)* | Line-number color override (no `#`) |
+
+### 3-D Transforms
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `tilt` | number | `0` | Z-axis tilt in degrees (−45 to 45) |
+| `depth` | number | `0` | X-axis perspective rotation — top/bottom lean |
+| `depth_y` | number | `0` | Y-axis perspective rotation — left/right lean |
+
+### Trapezoid Distortion
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `trap_left` | number | `100` | Left-edge height % — 100 = straight |
+| `trap_right` | number | `100` | Right-edge height % |
+| `trap_top` | number | `100` | Top-edge width % |
+| `trap_bottom` | number | `100` | Bottom-edge width % |
+
+### Window Position
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `offset_x` | number | `0` | Horizontal offset as % of window width |
+| `offset_y` | number | `0` | Vertical offset as % of window height |
+
+### Filters
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `filter` | string | `none` | `none` `bw` `sepia` `cool` `warm` `faded` `vivid` `cinematic` `noir` `amber` `mint` `dusk` `retro` `neon` `lofi` `bleach` `ice` `overexposed` `darkroom` `dreamy` |
+| `filter_intensity` | number | `100` | Filter strength 0–100 % |
+
+### Textures
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `texture` | string | `none` | `none` `paper` `grain` `linen` `wood` `metal-shiny` `metal-brushed` `carbon` `scanlines` `glitter` `noise` `dots` `grid` `diagonal` `crosshatch` `hex` `concrete` `denim` `vignette` `frosted` |
+| `texture_intensity` | number | `50` | Texture opacity 0–100 % |
+
+### Zoom & Opacity
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `zoom` | number | `100` | Code-block zoom 10–300 % (background unchanged) |
+| `window_opacity` | number | `100` | Window opacity 0–100 % |
+
+### Gradient Blur
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `grad_blur` | bool | `false` | Apply directional blur gradient over the code |
+| `grad_blur_dir` | string | `bottom` | `top` `bottom` `left` `right` |
+| `grad_blur_amount` | number | `20` | Maximum blur radius in px |
+| `grad_blur_start` | number | `30` | Point (%) at which blurring starts |
+
+### Plain-text Mode (`mode=text`)
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `text_color` | hex | `e0e0e0` | Text color (no `#`) |
+| `text_bg` | hex | `1e1e2e` | Background color (no `#`) |
+| `plain_font` | string | `Arial` | Font family |
+| `text_align` | string | `left` | `left` `center` `right` `justify` |
+
+### Output
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `watermark` | bool | `false` | Overlay the CodeShot watermark |
+| `img_format` | string | `png` | `png` `jpg` `gif` `tiff` `base64` |
+
+---
+
+## Supported Languages
+
+`bash` `c` `cpp` `csharp` `css` `dart` `dockerfile` `elixir` `erlang` `fsharp` `go` `graphql` `groovy` `haskell` `html` `ini` `java` `javascript` `json` `jsx` `kotlin` `lisp` `lua` `makefile` `markdown` `matlab` `nginx` `objectivec` `pascal` `perl` `php` `plaintext` `powershell` `python` `r` `ruby` `rust` `scala` `scss` `shell` `sql` `swift` `tex` `toml` `tsx` `typescript` `vbnet` `vim` `xml` `yaml` `1c`
+
+---
+
+## API Info Endpoint
+
+`GET /api/info` — returns the full parameter reference as JSON.
+
+---
+
+## License
+
+[MIT](https://github.com/Mansiper/CodeShot/blob/master/LICENSE)
