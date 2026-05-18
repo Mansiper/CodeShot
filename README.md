@@ -41,7 +41,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Settings presets** — save current settings under a name, load or delete saved presets
 - **Light/dark UI** toggle
 - **Resizable** editor/preview split pane
-- Zero dependencies, zero backend — runs entirely in the browser
+- Zero backend — runs entirely in the browser
 
 ---
 
