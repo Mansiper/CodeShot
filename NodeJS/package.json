@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
-    "postinstall": "puppeteer browsers install chrome"
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "express": "^5.2.1",
