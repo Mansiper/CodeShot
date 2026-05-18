@@ -110,6 +110,7 @@
           <div class="toggle-group" id="input-mode-group">
             <button class="toggle-btn" data-val="code">Code</button>
             <button class="toggle-btn" data-val="text">Plain Text</button>
+            <button class="toggle-btn" data-val="markdown">Markdown</button>
           </div>
         </div>
         <div id="lang-wrap">
@@ -162,7 +163,7 @@
             <span class="color-label">Background</span>
             <input type="color" id="plain-text-bg">
           </div>
-          <div class="field" style="margin-top:8px">
+          <div class="field" id="plain-align-wrap" style="margin-top:8px">
             <div class="field-label">Text Align</div>
             <div class="toggle-group" id="plain-align-group">
               <button class="toggle-btn" data-val="left">Left</button>
@@ -170,6 +171,16 @@
               <button class="toggle-btn" data-val="right">Right</button>
               <button class="toggle-btn" data-val="justify">Justify</button>
             </div>
+          </div>
+        </div>
+        <div id="md-settings-wrap" style="display:none">
+          <div class="color-row">
+            <span class="color-label">Heading Color</span>
+            <input type="color" id="md-heading-color">
+          </div>
+          <div class="color-row">
+            <span class="color-label">Link Color</span>
+            <input type="color" id="md-link-color">
           </div>
         </div>
         <div id="theme-wrap">

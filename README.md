@@ -18,6 +18,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 
 - **Syntax highlighting** for 40+ languages via [highlight.js](https://highlightjs.org/) — JavaScript, TypeScript, Python, Rust, Go, SQL, and more
 - **Plain text align**
+- **Markdown mode**
 - **8 code themes** — One Dark, Monokai, Dracula, Nord, Tokyo Night, GitHub Dark/Light, Solarized
 - **9 monospace fonts** — JetBrains Mono, Fira Code, Source Code Pro, Space Mono, and more
 - **Plain text mode** with custom font and color picker
@@ -46,8 +47,8 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 
 ## Usage
 
-1. **Paste or type** your code (or plain text) in the left panel
-2. **Pick a language** for syntax highlighting
+1. **Paste or type** your code, text, or Markdown in the left panel
+2. **Pick a mode** — Code (with syntax highlighting), Plain Text, or Markdown
 3. **Customize** appearance using the settings panel — theme, font, background, effects
 4. **Preview** updates live in the right panel
 5. **Export PNG** or **Copy PNG** to clipboard

@@ -93,7 +93,7 @@ const VALID_ALIGN    = ['left','center','right','justify'];
 function buildState(q, code) {
   return {
     code,
-    inputMode:        parseEnum(q.mode,           ['code','text'],  'code'),
+    inputMode:        parseEnum(q.mode,           ['code','text','markdown'],  'code'),
     language:         parseEnum(q.lang,           VALID_LANGS,      'javascript'),
     font:             parseFont(q.font)                           || 'JetBrains Mono',
     fontSize:         parseNum (q.size,           14),
@@ -137,6 +137,8 @@ function buildState(q, code) {
     plainTextBg:      parseHex (q.text_bg)                        || '#1e1e2e',
     plainFont:        parseFont(q.plain_font)                     || 'Arial',
     plainTextAlign:   parseEnum(q.text_align,     VALID_ALIGN,      'left'),
+    mdHeadingColor:   parseHex (q.md_heading_color)               || '#e2c08d',
+    mdLinkColor:      parseHex (q.md_link_color)                  || '#61afef',
     // keep selection clear; not applicable in API context
     selectionColor:   '#6490ff',
     selectionOpacity: 0,
@@ -296,7 +298,7 @@ app.get('/api/info', (_req, res) => {
     body:        'Plain text — the source code (or text) to render.',
     params: {
       // ── Content ────────────────────────────────────────────────────────────
-      mode:               { type: 'string',  values: ['code','text'],      default: 'code',           description: 'Rendering mode: syntax-highlighted code or plain text' },
+      mode:               { type: 'string',  values: ['code','text','markdown'], default: 'code',           description: 'Rendering mode: syntax-highlighted code, plain text, or rendered Markdown' },
       lang:               { type: 'string',  values: VALID_LANGS,          default: 'javascript',     description: 'Syntax-highlighting language' },
       // ── Typography ─────────────────────────────────────────────────────────
       font:               { type: 'string',  example: 'JetBrains_Mono',    default: 'JetBrains_Mono', description: 'Code font (underscores become spaces)' },
@@ -351,10 +353,13 @@ app.get('/api/info', (_req, res) => {
       grad_blur_amount:   { type: 'number',  range: '0–40',                default: 20,               description: 'Maximum blur radius in px' },
       grad_blur_start:    { type: 'number',  range: '0–100',               default: 30,               description: 'Point (%) at which blurring starts' },
       // ── Plain-text mode ────────────────────────────────────────────────────
-      text_color:         { type: 'hex',     example: 'e0e0e0',            default: 'e0e0e0',         description: 'Text color for mode=text (no #)' },
-      text_bg:            { type: 'hex',     example: '1e1e2e',            default: '1e1e2e',         description: 'Background color for mode=text (no #)' },
-      plain_font:         { type: 'string',  example: 'Arial',             default: 'Arial',          description: 'Font family for mode=text' },
+      text_color:         { type: 'hex',     example: 'e0e0e0',            default: 'e0e0e0',         description: 'Text color for mode=text/markdown (no #)' },
+      text_bg:            { type: 'hex',     example: '1e1e2e',            default: '1e1e2e',         description: 'Background color for mode=text/markdown (no #)' },
+      plain_font:         { type: 'string',  example: 'Arial',             default: 'Arial',          description: 'Font family for mode=text/markdown' },
       text_align:         { type: 'string',  values: VALID_ALIGN,          default: 'left',           description: 'Text alignment for mode=text' },
+      // ── Markdown mode ──────────────────────────────────────────────────────
+      md_heading_color:   { type: 'hex',     example: 'e2c08d',            default: 'e2c08d',         description: 'Heading color for mode=markdown (no #)' },
+      md_link_color:      { type: 'hex',     example: '61afef',            default: '61afef',         description: 'Link color for mode=markdown (no #)' },
       // ── Output ─────────────────────────────────────────────────────────────
       watermark:          { type: 'bool',                                   default: false,            description: 'Overlay the CodeShot watermark' },
       img_format:         { type: 'string',  values: VALID_FORMATS,        default: 'png',            description: 'Output format (base64 returns a text/plain data-URL)' },
