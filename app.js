@@ -173,6 +173,8 @@ const DEFAULTS = {
   ligatures: true,
   letterSpacing: 0,
   tabSize: 4,
+  scaleMultiplier: 1,
+  aspectRatio: 'custom',
 };
 
 let state = { ...DEFAULTS };
@@ -207,6 +209,12 @@ function isDark(hex) {
 /* ════════════════════════════════════════════
    TOKEN PARSING
 ════════════════════════════════════════════ */
+
+function parseAspectRatio(ar) {
+  if (!ar || ar === 'custom') return null;
+  const parts = ar.split(':').map(Number);
+  return (parts.length === 2 && parts[0] > 0 && parts[1] > 0) ? parts : null;
+}
 
 function parseTokens(html, theme) {
   const div = document.createElement('div');
@@ -1689,6 +1697,25 @@ function doRender() {
   const canvas = document.getElementById('preview-canvas');
   const ctx = canvas.getContext('2d');
 
+  // Temporarily scale pixel dimensions for high-res render
+  const sm = state.scaleMultiplier || 1;
+  let savedScale = null;
+  if (sm > 1) {
+    savedScale = {
+      fontSize: state.fontSize,
+      innerPadding: state.innerPadding,
+      outerPadding: state.outerPadding,
+      cornerRadius: state.cornerRadius,
+      shadowBlur: state.shadowBlur,
+    };
+    state.fontSize     = Math.round(state.fontSize     * sm);
+    state.innerPadding = Math.round(state.innerPadding * sm);
+    state.outerPadding = Math.round(state.outerPadding * sm);
+    state.cornerRadius = Math.round(state.cornerRadius * sm);
+    state.shadowBlur   = Math.round(state.shadowBlur   * sm);
+    tokCache = null;
+  }
+
   let off = renderCode();
 
   // Lock canvas size to unzoomed dimensions so background is unaffected
@@ -1717,8 +1744,8 @@ function doRender() {
 
   const iw = off.width, ih = off.height;
   const op = state.outerPadding;
-  const cW = baseW + op * 2;  // fixed — background ignores zoom
-  const cH = baseH + op * 2;
+  let cW = baseW + op * 2;  // fixed — background ignores zoom
+  let cH = baseH + op * 2;
 
   canvas.width  = cW;
   canvas.height = cH;
@@ -1781,6 +1808,28 @@ function doRender() {
   // Screen glare overlay
   applyGlare(ctx, cW, cH);
 
+  // Apply aspect ratio by padding the canvas
+  const arParsed = parseAspectRatio(state.aspectRatio);
+  if (arParsed) {
+    const arRatio = arParsed[0] / arParsed[1];
+    let finalW = cW, finalH = cH;
+    if (cW / cH < arRatio) {
+      finalW = Math.round(cH * arRatio);
+    } else if (cW / cH > arRatio) {
+      finalH = Math.round(cW / arRatio);
+    }
+    if (finalW !== cW || finalH !== cH) {
+      const tmp = document.createElement('canvas');
+      tmp.width = finalW; tmp.height = finalH;
+      const tctx = tmp.getContext('2d');
+      drawBackground(tctx, finalW, finalH);
+      tctx.drawImage(canvas, Math.round((finalW - cW) / 2), Math.round((finalH - cH) / 2));
+      canvas.width = finalW; canvas.height = finalH;
+      canvas.getContext('2d').drawImage(tmp, 0, 0);
+      cW = finalW; cH = finalH;
+    }
+  }
+
   // Watermark
   if (showWatermark) {
     const wmText = 'github.com/Mansiper/CodeShot';
@@ -1794,6 +1843,9 @@ function doRender() {
     ctx.fillText(wmText, cW - 10, cH - 8);
     ctx.restore();
   }
+
+  // Restore scaled pixel values after render
+  if (savedScale) { Object.assign(state, savedScale); tokCache = null; }
 
   // Update preview display size
   scaleCanvasDisplay();
@@ -2387,6 +2439,10 @@ function syncUI() {
   document.getElementById('selection-color').value = state.selectionColor;
   setRange('selection-opacity', state.selectionOpacity, 'selection-opacity-val', v => v + '%');
 
+  // Export Size
+  document.querySelectorAll('#scale-group .toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(state.scaleMultiplier)));
+  document.querySelectorAll('#aspect-ratio-group .toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.val === state.aspectRatio));
+
   // Watermark
   setSwitch('watermark-switch', showWatermark);
 
@@ -2661,6 +2717,18 @@ function bindEvents() {
     showWatermark = !showWatermark;
     setSwitch('watermark-switch', showWatermark);
     scheduleRender();
+  });
+
+  // Scale multiplier
+  document.getElementById('scale-group').addEventListener('click', e => {
+    const b = e.target.closest('.toggle-btn'); if (!b) return;
+    change('scaleMultiplier', parseInt(b.dataset.val)); syncUI();
+  });
+
+  // Aspect ratio
+  document.getElementById('aspect-ratio-group').addEventListener('click', e => {
+    const b = e.target.closest('.toggle-btn'); if (!b) return;
+    change('aspectRatio', b.dataset.val); syncUI();
   });
 
   // Inputs
