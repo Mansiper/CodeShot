@@ -178,7 +178,8 @@ const GRADIENT_PRESETS = [
   ['#373b44','#4286f4',150],
 ];
 const CODE_FONTS = [
-  'Courier New','DM Mono','Fira Code','Inconsolata','JetBrains Mono',
+  'Anonymous Pro','Courier New','Cousine','DM Mono','Fira Code',
+  'IBM Plex Mono','Inconsolata','JetBrains Mono','Noto Sans Mono','Overpass Mono',
   'Roboto Mono','Source Code Pro','Space Mono','monospace','Ubuntu Mono',
 ];
 

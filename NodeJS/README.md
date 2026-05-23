@@ -115,7 +115,7 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 
 | Param | Type | Default | Description |
 |---|---|---|---|
-| `font` | string | `JetBrains_Mono` | Code font. Underscores become spaces (`Ubuntu_Mono` → `Ubuntu Mono`) |
+| `font` | string | `JetBrains_Mono` | Code font. Underscores become spaces (`Ubuntu_Mono` → `Ubuntu Mono`). See **Supported Fonts** below |
 | `size` | number | `14` | Font size in px |
 | `line_height` | number | `1.6` | Line-height multiplier |
 | `ligatures` | bool | `true` | Enable font ligatures (disable to force character-by-character rendering, preventing ligature substitution) |
@@ -277,6 +277,12 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 |---|---|---|---|
 | `watermark` | bool | `false` | Overlay the CodeShot watermark |
 | `img_format` | string | `png` | `png` `jpg` `webp` `gif` `tiff` `base64` |
+
+---
+
+## Supported Fonts
+
+`Anonymous Pro` `Courier New` `Cousine` `DM Mono` `Fira Code` `IBM Plex Mono` `Inconsolata` `JetBrains Mono` `Noto Sans Mono` `Overpass Mono` `Roboto Mono` `Source Code Pro` `Space Mono` `monospace` `Ubuntu Mono`
 
 ---
 

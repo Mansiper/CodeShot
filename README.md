@@ -20,7 +20,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Plain text align**
 - **Markdown mode**
 - **20 code themes** — 7 light (GitHub Light, One Light, Solarized Light, VS Code Light, Gruvbox Light, Rosé Pine Dawn, Quiet Light) and 13 dark (One Dark, Monokai, Dracula, Nord, Tokyo Night, GitHub Dark, Solarized Dark, Material, Synthwave, Night Owl, Catppuccin, Ayu Dark, Gruvbox Dark)
-- **9 monospace fonts** — JetBrains Mono, Fira Code, Source Code Pro, Space Mono, and more
+- **15 monospace fonts** — JetBrains Mono, Fira Code, Source Code Pro, Space Mono, and more
 - **Ligatures toggle** — enable or disable font ligatures for code fonts (JetBrains Mono, Fira Code, etc.)
 - **Letter spacing** — adjustable letter spacing from −2px to 10px
 - **Tab size** — configurable tab width from 1 to 10 spaces
