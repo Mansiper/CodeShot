@@ -26,6 +26,12 @@ html,body{height:100%;overflow:hidden;font-family:var(--ui);font-size:12px;backg
 .section{padding:14px 14px 6px}
 .section+.section{border-top:1px solid var(--border)}
 .section-title{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:11px;padding-left:1px}
+.section.collapsible .section-title{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;margin-bottom:0}
+.section.collapsible .section-title::after{content:'▲';font-size:7px;opacity:.45;transition:transform .2s}
+.section.collapsible.collapsed .section-title::after{transform:rotate(180deg)}
+.section.collapsible .section-title{padding-bottom:11px}
+.section.collapsible.collapsed .section-title{padding-bottom:0}
+.section.collapsible.collapsed>*:not(.section-title){display:none!important}
 .field{margin-bottom:11px}
 .field-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;color:var(--text-dim);font-size:10.5px}
 .field-value{color:var(--accent)}

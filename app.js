@@ -2693,3 +2693,9 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+document.querySelectorAll('.section.collapsible .section-title').forEach(title => {
+  title.addEventListener('click', () => {
+    title.closest('.section').classList.toggle('collapsed');
+  });
+});
