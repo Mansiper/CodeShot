@@ -211,16 +211,22 @@
         <div id="theme-wrap">
           <div class="field">
             <div class="field-label">Theme</div>
-            <div class="cs-dropdown" id="theme-dropdown">
-              <button class="cs-dropdown-trigger" id="theme-trigger" type="button">
-                <div class="theme-swatches" id="theme-trigger-swatches" style="gap:2px"></div>
-                <div id="theme-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
-                <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
-              </button>
-              <div class="cs-dropdown-panel" id="theme-panel">
-                <div id="theme-grid"></div>
+            <div style="display:flex;gap:5px;align-items:flex-start">
+              <div class="cs-dropdown" id="theme-dropdown" style="flex:1;min-width:0">
+                <button class="cs-dropdown-trigger" id="theme-trigger" type="button">
+                  <div class="theme-swatches" id="theme-trigger-swatches" style="gap:2px"></div>
+                  <div id="theme-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+                  <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+                </button>
+                <div class="cs-dropdown-panel" id="theme-panel">
+                  <div id="theme-grid"></div>
+                </div>
               </div>
+              <button class="btn" id="theme-edit-btn" style="flex-shrink:0;padding:6px 9px" title="Edit theme colors">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
             </div>
+            <div id="theme-editor" style="display:none;margin-top:8px"></div>
           </div>
         </div>
       </div>

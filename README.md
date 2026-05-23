@@ -19,7 +19,8 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Syntax highlighting** for 40+ languages via [highlight.js](https://highlightjs.org/) — JavaScript, TypeScript, Python, Rust, Go, SQL, and more
 - **Plain text align**
 - **Markdown mode**
-- **20 code themes** — 7 light (GitHub Light, One Light, Solarized Light, VS Code Light, Gruvbox Light, Rosé Pine Dawn, Quiet Light) and 13 dark (One Dark, Monokai, Dracula, Nord, Tokyo Night, GitHub Dark, Solarized Dark, Material, Synthwave, Night Owl, Catppuccin, Ayu Dark, Gruvbox Dark)
+- **21 code themes** — 7 light (GitHub Light, One Light, Solarized Light, VS Code Light, Gruvbox Light, Rosé Pine Dawn, Quiet Light), 13 dark (One Dark, Monokai, Dracula, Nord, Tokyo Night, GitHub Dark, Solarized Dark, Material, Synthwave, Night Owl, Catppuccin, Ayu Dark, Gruvbox Dark), and 1 custom
+- **Custom theme editor** — edit any theme's colors directly in the UI; save per-theme color overrides (persisted in `localStorage`); reset any theme back to its defaults
 - **15 monospace fonts** — JetBrains Mono, Fira Code, Source Code Pro, Space Mono, and more
 - **Ligatures toggle** — enable or disable font ligatures for code fonts (JetBrains Mono, Fira Code, etc.)
 - **Letter spacing** — adjustable letter spacing from −2px to 10px

@@ -35,9 +35,30 @@ const THEMES = {
   'catppuccin':     {name:'Catppuccin',    bg:'#1e1e2e',  fg:'#cdd6f4',  keyword:'#cba6f7',string:'#a6e3a1',number:'#fab387',comment:'#6c7086',function:'#89b4fa',title:'#89b4fa',built_in:'#89dceb',type:'#89dceb',class:'#f38ba8',attr:'#89dceb',tag:'#f38ba8',name:'#f38ba8',operator:'#cba6f7',literal:'#fab387',variable:'#cdd6f4',property:'#89dceb',punctuation:'#cdd6f4',params:'#fab387',meta:'#6c7086',regexp:'#a6e3a1',selector:'#f38ba8',subst:'#cdd6f4',symbol:'#cba6f7',link:'#a6e3a1'},
   'ayu-dark':       {name:'Ayu Dark',      bg:'#1f2430',  fg:'#cbccc6',  keyword:'#ffa759',string:'#bae67e',number:'#ffcc66',comment:'#5c6773',function:'#ffd580',title:'#ffd580',built_in:'#5ccfe6',type:'#5ccfe6',class:'#73d0ff',attr:'#cbccc6',tag:'#f28779',name:'#f28779',operator:'#ffa759',literal:'#d4bfff',variable:'#cbccc6',property:'#5ccfe6',punctuation:'#cbccc6',params:'#cbccc6',meta:'#5c6773',regexp:'#95e6cb',selector:'#f28779',subst:'#cbccc6',symbol:'#d4bfff',link:'#bae67e'},
   'gruvbox-dark':   {name:'Gruvbox Dark',  bg:'#282828',  fg:'#ebdbb2',  keyword:'#fb4934',string:'#b8bb26',number:'#d3869b',comment:'#928374',function:'#83a598',title:'#83a598',built_in:'#fabd2f',type:'#fabd2f',class:'#8ec07c',attr:'#ebdbb2',tag:'#fb4934',name:'#fb4934',operator:'#fb4934',literal:'#d3869b',variable:'#ebdbb2',property:'#83a598',punctuation:'#ebdbb2',params:'#ebdbb2',meta:'#928374',regexp:'#b8bb26',selector:'#fb4934',subst:'#ebdbb2',symbol:'#d3869b',link:'#b8bb26'},
+  // ── Custom (1) ─────────────────────────────────────────────────────────────
+  'custom':         {name:'Custom',        bg:'#1e1e2e',  fg:'#cdd6f4',  keyword:'#cba6f7',string:'#a6e3a1',number:'#fab387',comment:'#6c7086',function:'#89b4fa',title:'#89b4fa',built_in:'#89dceb',type:'#89dceb',class:'#f38ba8',attr:'#89dceb',tag:'#f38ba8',name:'#f38ba8',operator:'#cba6f7',literal:'#fab387',variable:'#cdd6f4',property:'#89dceb',punctuation:'#cdd6f4',params:'#fab387',meta:'#6c7086',regexp:'#a6e3a1',selector:'#f38ba8',subst:'#cdd6f4',symbol:'#cba6f7',link:'#a6e3a1'},
 };
 
 const LIGHT_THEME_KEYS = ['github-light','one-light','solarized-light','vs-light','gruvbox-light','rose-pine-dawn','quiet-light'];
+
+const THEMES_ORIG = JSON.parse(JSON.stringify(THEMES));
+const THEME_OVERRIDES_KEY = 'codeshot_theme_overrides';
+const THEME_COLOR_PROPS = [
+  {key:'bg',label:'Background'},{key:'fg',label:'Foreground'},
+  {key:'keyword',label:'Keyword'},{key:'string',label:'String'},
+  {key:'number',label:'Number'},{key:'comment',label:'Comment'},
+  {key:'function',label:'Function'},{key:'title',label:'Title'},
+  {key:'built_in',label:'Built-in'},{key:'type',label:'Type'},
+  {key:'class',label:'Class'},{key:'attr',label:'Attr'},
+  {key:'tag',label:'Tag'},{key:'name',label:'Name'},
+  {key:'operator',label:'Operator'},{key:'literal',label:'Literal'},
+  {key:'variable',label:'Variable'},{key:'property',label:'Property'},
+  {key:'punctuation',label:'Punct.'},{key:'params',label:'Params'},
+  {key:'meta',label:'Meta'},{key:'regexp',label:'Regexp'},
+  {key:'selector',label:'Selector'},{key:'subst',label:'Subst'},
+  {key:'symbol',label:'Symbol'},{key:'link',label:'Link'},
+];
+let themeOverrides = {};
 
 const GRADIENT_PRESETS = [
   ['#0f0c29','#302b63',135],['#0a0a2e','#1a0533',180],['#001f3f','#0a3d62',150],
@@ -216,24 +237,61 @@ function parseAspectRatio(ar) {
   return (parts.length === 2 && parts[0] > 0 && parts[1] > 0) ? parts : null;
 }
 
+// Annotates hljs-title spans that follow class/interface/namespace/etc. keywords with 'class_',
+// so they pick up the 'class' theme color (C#/Java grammars don't wrap these in hljs-class).
+function annotateHljsHtml(container) {
+  const CLASS_KWORDS = new Set(['class','interface','record','struct','enum','namespace']);
+  for (const kw of container.querySelectorAll('.hljs-keyword')) {
+    if (!CLASS_KWORDS.has(kw.textContent.trim())) continue;
+    let sib = kw.nextSibling;
+    while (sib) {
+      if (sib.nodeType === 3 && sib.textContent.trim() === '') { sib = sib.nextSibling; continue; }
+      if (sib.nodeType === 1 && sib.classList.contains('hljs-title') && !sib.classList.contains('class_'))
+        sib.classList.add('class_');
+      break;
+    }
+  }
+}
+
 function parseTokens(html, theme) {
   const div = document.createElement('div');
   div.innerHTML = html;
+  annotateHljsHtml(div);
   const out = [];
-  function walk(node, color) {
+  // parentKey: the semantic key of the nearest ancestor hljs span (e.g. 'function', 'class')
+  function walk(node, color, parentKey) {
     if (node.nodeType === 3) { if (node.textContent) out.push({text:node.textContent, color}); return; }
     if (node.nodeType !== 1) return;
     let c = color;
-    for (const cl of node.classList) {
-      if (cl.startsWith('hljs-')) {
-        const k = cl.slice(5).replace(/-/g,'_');
-        c = theme[k] || theme[cl.slice(5)] || color;
-        break;
+    let nextKey = parentKey;
+    const classes = Array.from(node.classList);
+    const hljsCl = classes.find(cl => cl.startsWith('hljs-'));
+    if (hljsCl) {
+      const baseKey = hljsCl.slice(5).replace(/-/g,'_');
+      // hljs v11 modifier classes (e.g. "function_", "class_" on the same span as "hljs-title")
+      let key = baseKey;
+      for (const cl of classes) {
+        if (!cl.startsWith('hljs-')) {
+          const mod = cl.replace(/_+$/, ''); // strip all trailing underscores
+          if (theme[mod] !== undefined) { key = mod; break; }
+          // hljs v11 modifier aliases that don't directly match a theme key
+          if (mod === 'inherited') { key = 'class';    break; }
+          if (mod === 'invoke')    { key = 'function'; break; }
+        }
+      }
+      // hljs C#/Java style: function name is hljs-title nested inside hljs-function wrapper.
+      // When hljs-title is encountered, prefer the semantic parent context over generic 'title'.
+      if (key === 'title' && parentKey && parentKey !== 'title') {
+        c = theme[parentKey] || theme[key] || color;
+        nextKey = parentKey;
+      } else {
+        c = theme[key] || theme[baseKey] || color;
+        nextKey = key;
       }
     }
-    for (const ch of node.childNodes) walk(ch, c);
+    for (const ch of node.childNodes) walk(ch, c, nextKey);
   }
-  walk(div, theme.fg);
+  walk(div, theme.fg, null);
   return out;
 }
 
@@ -2278,6 +2336,10 @@ function scheduleSave() {
   }, SAVE_DELAY);
 }
 
+function saveThemeOverrides() {
+  try { localStorage.setItem(THEME_OVERRIDES_KEY, JSON.stringify(themeOverrides)); } catch(e) {}
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -2298,6 +2360,15 @@ function loadState() {
   try {
     const sr = localStorage.getItem(SPLIT_KEY);
     if (sr) splitRatio = parseFloat(sr);
+  } catch(e) {}
+  try {
+    const raw = localStorage.getItem(THEME_OVERRIDES_KEY);
+    if (raw) {
+      themeOverrides = JSON.parse(raw);
+      for (const [k, overrides] of Object.entries(themeOverrides)) {
+        if (THEMES[k]) Object.assign(THEMES[k], overrides);
+      }
+    }
   } catch(e) {}
 }
 
@@ -2383,11 +2454,52 @@ function applyEditorTheme() {
   let css = `#code-highlight{background:${t.bg};color:${t.fg};font-family:"${state.font}",monospace}\n`;
   css += `#code-input{caret-color:${t.fg};font-family:"${state.font}",monospace}\n`;
   for (const k of keys) {
-    if (t[k]) css += `#code-highlight .hljs-${k}{color:${t[k]}}\n`;
+    if (t[k]) {
+      css += `#code-highlight .hljs-${k}{color:${t[k]}}\n`;
+      // hljs v11 modifier classes (JS/TS style): hljs-title.function_, hljs-title.class_, etc.
+      css += `#code-highlight .hljs-title.${k}_{color:${t[k]}}\n`;
+      // C#/Java style: hljs-title nested inside any hljs-{k} wrapper
+      css += `#code-highlight .hljs-${k} .hljs-title{color:${t[k]}}\n`;
+      // hljs v11 modifier aliases: inherited__ → class, invoke_ → function
+      if (k === 'class')    css += `#code-highlight .hljs-title.inherited__{color:${t[k]}}\n`;
+      if (k === 'function') css += `#code-highlight .hljs-title.invoke_{color:${t[k]}}\n`;
+    }
   }
   let el = document.getElementById('hljs-theme-style');
   if (!el) { el = document.createElement('style'); el.id='hljs-theme-style'; document.head.appendChild(el); }
   el.textContent = css;
+}
+
+function colorizeEditorDOM(container, theme) {
+  function walk(node, color, parentKey) {
+    if (node.nodeType !== 1) return;
+    let c = color;
+    let nextKey = parentKey;
+    const classes = Array.from(node.classList);
+    const hljsCl = classes.find(cl => cl.startsWith('hljs-'));
+    if (hljsCl) {
+      const baseKey = hljsCl.slice(5).replace(/-/g,'_');
+      let key = baseKey;
+      for (const cl of classes) {
+        if (!cl.startsWith('hljs-')) {
+          const mod = cl.replace(/_+$/, '');
+          if (theme[mod] !== undefined) { key = mod; break; }
+          if (mod === 'inherited') { key = 'class';    break; }
+          if (mod === 'invoke')    { key = 'function'; break; }
+        }
+      }
+      if (key === 'title' && parentKey && parentKey !== 'title') {
+        c = theme[parentKey] || theme[key] || color;
+        nextKey = parentKey;
+      } else {
+        c = theme[key] || theme[baseKey] || color;
+        nextKey = key;
+      }
+      node.style.color = c;
+    }
+    for (const ch of node.childNodes) walk(ch, c, nextKey);
+  }
+  walk(container, theme.fg, null);
 }
 
 function updateEditorHighlight() {
@@ -2410,6 +2522,8 @@ function updateEditorHighlight() {
     const d = document.createElement('div'); d.textContent = code; html = d.innerHTML;
   }
   el.innerHTML = html + '\n';
+  annotateHljsHtml(el);
+  colorizeEditorDOM(el, THEMES[state.theme]);
 }
 
 /* ════════════════════════════════════════════
@@ -2748,6 +2862,72 @@ function bindEvents() {
     const b = e.target.closest('.theme-btn'); if (!b) return;
     tokCache = null; change('theme', b.dataset.theme); syncUI();
     document.getElementById('theme-dropdown').classList.remove('open');
+    // Refresh editor if it's open
+    const teEl = document.getElementById('theme-editor');
+    if (teEl && teEl.style.display !== 'none') {
+      const t = THEMES[state.theme];
+      document.getElementById('te-title').textContent = `Editing: ${t.name}`;
+      for (const {key: prop} of THEME_COLOR_PROPS) {
+        const inp = document.getElementById(`te-${prop}`);
+        if (inp) inp.value = t[prop] || '#000000';
+      }
+    }
+  });
+
+  // Theme editor — open/close
+  document.getElementById('theme-edit-btn').addEventListener('click', () => {
+    const teEl = document.getElementById('theme-editor');
+    if (teEl.style.display !== 'none') {
+      teEl.style.display = 'none';
+      return;
+    }
+    const t = THEMES[state.theme];
+    document.getElementById('te-title').textContent = `Editing: ${t.name}`;
+    for (const {key: prop} of THEME_COLOR_PROPS) {
+      const inp = document.getElementById(`te-${prop}`);
+      if (inp) inp.value = t[prop] || '#000000';
+    }
+    teEl.style.display = '';
+  });
+
+  // Theme editor — save
+  document.getElementById('theme-editor-save').addEventListener('click', () => {
+    const themeKey = state.theme;
+    const overrides = {};
+    for (const {key: prop} of THEME_COLOR_PROPS) {
+      const inp = document.getElementById(`te-${prop}`);
+      if (inp) overrides[prop] = inp.value;
+    }
+    themeOverrides[themeKey] = overrides;
+    Object.assign(THEMES[themeKey], overrides);
+    saveThemeOverrides();
+    tokCache = null;
+    syncUI();
+    applyEditorTheme();
+    updateEditorHighlight();
+    scheduleRender();
+  });
+
+  // Theme editor — cancel
+  document.getElementById('theme-editor-cancel').addEventListener('click', () => {
+    document.getElementById('theme-editor').style.display = 'none';
+  });
+
+  // Theme editor — reset
+  document.getElementById('theme-editor-reset').addEventListener('click', () => {
+    const themeKey = state.theme;
+    Object.assign(THEMES[themeKey], THEMES_ORIG[themeKey]);
+    delete themeOverrides[themeKey];
+    saveThemeOverrides();
+    const t = THEMES[themeKey];
+    document.getElementById('te-title').textContent = `Editing: ${t.name}`;
+    for (const {key: prop} of THEME_COLOR_PROPS) {
+      const inp = document.getElementById(`te-${prop}`);
+      if (inp) inp.value = t[prop] || '#000000';
+    }
+    tokCache = null;
+    syncUI();
+    scheduleRender();
   });
 
   // Plain text colors
@@ -2983,14 +3163,18 @@ function buildUI() {
 
   // Themes — sectioned dropdown panel
   const tg = document.getElementById('theme-grid');
-  ['Light', 'Dark'].forEach(group => {
+  ['Light', 'Dark', 'Custom'].forEach(group => {
     const lbl = document.createElement('div');
     lbl.className = 'cs-section-label'; lbl.textContent = group;
     tg.appendChild(lbl);
     const grid = document.createElement('div');
     grid.className = 'theme-grid'; tg.appendChild(grid);
     for (const [k, t] of Object.entries(THEMES)) {
-      if ((group === 'Light') !== LIGHT_THEME_KEYS.includes(k)) continue;
+      const isLight = LIGHT_THEME_KEYS.includes(k);
+      const isCustom = k === 'custom';
+      if (group === 'Light' && !isLight) continue;
+      if (group === 'Dark' && (isLight || isCustom)) continue;
+      if (group === 'Custom' && !isCustom) continue;
       const b = document.createElement('button');
       b.className = 'theme-btn'; b.dataset.theme = k;
       b.innerHTML = `<div class="theme-swatches">
@@ -3002,6 +3186,33 @@ function buildUI() {
       grid.appendChild(b);
     }
   });
+
+  // Theme editor
+  const teEditor = document.getElementById('theme-editor');
+  const teTitle = document.createElement('div');
+  teTitle.className = 'te-title'; teTitle.id = 'te-title';
+  teEditor.appendChild(teTitle);
+  const teColors = document.createElement('div');
+  teColors.className = 'te-colors'; teColors.id = 'te-colors';
+  for (const {key, label} of THEME_COLOR_PROPS) {
+    const row = document.createElement('div');
+    row.className = 'te-row';
+    const inp = document.createElement('input');
+    inp.type = 'color'; inp.id = `te-${key}`;
+    const lbl = document.createElement('span');
+    lbl.className = 'te-label'; lbl.textContent = label;
+    row.appendChild(inp); row.appendChild(lbl);
+    teColors.appendChild(row);
+  }
+  teEditor.appendChild(teColors);
+  const teActions = document.createElement('div');
+  teActions.className = 'te-actions';
+  teActions.innerHTML = `
+    <button class="btn btn-primary" id="theme-editor-save" style="flex:1;justify-content:center;font-size:10px">Save</button>
+    <button class="btn" id="theme-editor-cancel" style="flex:1;justify-content:center;font-size:10px">Cancel</button>
+    <button class="btn" id="theme-editor-reset" style="flex-shrink:0;font-size:10px">Reset</button>
+  `;
+  teEditor.appendChild(teActions);
 
   // Chrome styles
   const cg = document.getElementById('chrome-grid');

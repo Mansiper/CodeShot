@@ -131,7 +131,9 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 
 | Param | Type | Default | Values |
 |---|---|---|---|
-| `theme` | string | `one-dark` | **Light:** `github-light` `one-light` `solarized-light` `vs-light` `gruvbox-light` `rose-pine-dawn` `quiet-light` · **Dark:** `one-dark` `monokai` `dracula` `nord` `tokyo-night` `github-dark` `solarized` `material` `synthwave` `night-owl` `catppuccin` `ayu-dark` `gruvbox-dark` |
+| `theme` | string | `one-dark` | **Light:** `github-light` `one-light` `solarized-light` `vs-light` `gruvbox-light` `rose-pine-dawn` `quiet-light` · **Dark:** `one-dark` `monokai` `dracula` `nord` `tokyo-night` `github-dark` `solarized` `material` `synthwave` `night-owl` `catppuccin` `ayu-dark` `gruvbox-dark` · **Custom:** `custom` (uses the built-in Custom defaults; per-user color edits made in the browser UI are stored in `localStorage` and **not** available to the API) |
+
+> **Note:** The API does not support per-user custom theme color overrides. The `custom` theme value renders with the built-in default Custom colors. To use fully custom colors via the API, use the individual `text_color` / `text_bg` parameters available in `mode=text`.
 
 ### Background
 
