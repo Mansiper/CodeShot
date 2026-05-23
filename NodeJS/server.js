@@ -139,6 +139,16 @@ function buildState(q, code) {
     plainTextAlign:   parseEnum(q.text_align,     VALID_ALIGN,      'left'),
     mdHeadingColor:   parseHex (q.md_heading_color)               || '#e2c08d',
     mdLinkColor:      parseHex (q.md_link_color)                  || '#61afef',
+    // Screen glare
+    glareEnabled:     parseBool(q.glare,            false),
+    glareX:           parseNum (q.glare_x,          50),
+    glareY:           parseNum (q.glare_y,          50),
+    glareDistance:    parseNum (q.glare_distance,   200),
+    glareAngleH:      parseNum (q.glare_angle_h,    0),
+    glareAngleV:      parseNum (q.glare_angle_v,    0),
+    glareBlur:        parseNum (q.glare_blur,       30),
+    glareIntensity:   parseNum (q.glare_intensity,  60),
+    glareColor:       parseHex (q.glare_color)                    || '#ffffff',
     // keep selection clear; not applicable in API context
     selectionColor:   '#6490ff',
     selectionOpacity: 0,
@@ -360,8 +370,16 @@ app.get('/api/info', (_req, res) => {
       text_align:         { type: 'string',  values: VALID_ALIGN,          default: 'left',           description: 'Text alignment for mode=text' },
       // ── Markdown mode ──────────────────────────────────────────────────────
       md_heading_color:   { type: 'hex',     example: 'e2c08d',            default: 'e2c08d',         description: 'Heading color for mode=markdown (no #)' },
-      md_link_color:      { type: 'hex',     example: '61afef',            default: '61afef',         description: 'Link color for mode=markdown (no #)' },
-      // ── Output ─────────────────────────────────────────────────────────────
+      md_link_color:      { type: 'hex',     example: '61afef',            default: '61afef',         description: 'Link color for mode=markdown (no #)' },      // ── Screen glare ───────────────────────────────────────────────────────
+      glare:              { type: 'bool',                                   default: false,            description: 'Enable screen glare overlay' },
+      glare_x:            { type: 'number',  range: '-50–150',             default: 50,               description: 'Glare center X as % of canvas width (can exceed canvas bounds)' },
+      glare_y:            { type: 'number',  range: '-50–150',             default: 50,               description: 'Glare center Y as % of canvas height (can exceed canvas bounds)' },
+      glare_distance:     { type: 'number',  range: '10–500',              default: 200,              description: 'Distance of light source from screen — smaller = larger/softer glare' },
+      glare_angle_h:      { type: 'number',  range: '-75–75',              default: 0,                description: 'Horizontal angle — tilts ellipse width (0 = circle)' },
+      glare_angle_v:      { type: 'number',  range: '-75–75',              default: 0,                description: 'Vertical angle — tilts ellipse height (0 = circle)' },
+      glare_blur:         { type: 'number',  range: '0–100',               default: 30,               description: 'Blur radius applied to the glare in px' },
+      glare_intensity:    { type: 'number',  range: '0–100',               default: 60,               description: 'Glare brightness 0–100%' },
+      glare_color:        { type: 'hex',     example: 'ffffff',            default: 'ffffff',         description: 'Glare color (no #)' },      // ── Output ─────────────────────────────────────────────────────────────
       watermark:          { type: 'bool',                                   default: false,            description: 'Overlay the CodeShot watermark' },
       img_format:         { type: 'string',  values: VALID_FORMATS,        default: 'png',            description: 'Output format (base64 returns a text/plain data-URL)' },
     },

@@ -324,6 +324,51 @@
       </div>
 
       <div class="section">
+        <div class="section-title">Screen Glare</div>
+        <div class="field">
+          <label class="switch" id="glare-switch">
+            <div class="switch-track"></div>
+            <span>Enable</span>
+          </label>
+        </div>
+        <div id="glare-controls">
+          <div class="field">
+            <div class="field-label">X Position <span class="field-value" id="glare-x-val"></span></div>
+            <input type="range" id="glare-x" min="-50" max="150" step="1">
+          </div>
+          <div class="field">
+            <div class="field-label">Y Position <span class="field-value" id="glare-y-val"></span></div>
+            <input type="range" id="glare-y" min="-50" max="150" step="1">
+          </div>
+          <div class="field">
+            <div class="field-label">Distance <span class="field-value" id="glare-distance-val"></span></div>
+            <input type="range" id="glare-distance" min="10" max="500" step="5">
+          </div>
+          <div class="field">
+            <div class="field-label">Horiz. Angle <span class="field-value" id="glare-angle-h-val"></span></div>
+            <input type="range" id="glare-angle-h" min="-75" max="75" step="1">
+          </div>
+          <div class="field">
+            <div class="field-label">Vert. Angle <span class="field-value" id="glare-angle-v-val"></span></div>
+            <input type="range" id="glare-angle-v" min="-75" max="75" step="1">
+          </div>
+          <div class="field">
+            <div class="field-label">Blur <span class="field-value" id="glare-blur-val"></span></div>
+            <input type="range" id="glare-blur" min="0" max="100" step="1">
+          </div>
+          <div class="field">
+            <div class="field-label">Intensity <span class="field-value" id="glare-intensity-val"></span></div>
+            <input type="range" id="glare-intensity" min="0" max="100" step="1">
+          </div>
+          <div class="color-row">
+            <span class="color-label">Color</span>
+            <input type="color" id="glare-color">
+          </div>
+        </div>
+        <button class="btn" id="reset-glare" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset Glare</button>
+      </div>
+
+      <div class="section">
         <div class="section-title">3D Transform</div>
         <div class="field">
           <div class="field-label">Rotate Z° <span class="field-value" id="tilt-val"></span></div>

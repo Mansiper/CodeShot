@@ -144,6 +144,15 @@ const DEFAULTS = {
   plainTextAlign: 'left',
   texture: 'none',
   textureIntensity: 50,
+  glareEnabled: false,
+  glareX: 50,
+  glareY: 50,
+  glareDistance: 200,
+  glareAngleH: 0,
+  glareAngleV: 0,
+  glareBlur: 30,
+  glareIntensity: 60,
+  glareColor: '#ffffff',
 };
 
 let state = { ...DEFAULTS };
@@ -963,6 +972,72 @@ function applyTexture(ctx, cW, cH, textureId, intensity) {
 }
 
 /* ════════════════════════════════════════════
+   SCREEN GLARE
+════════════════════════════════════════════ */
+
+function applyGlare(ctx, cW, cH) {
+  if (!state.glareEnabled) return;
+
+  const gx = state.glareX / 100 * cW;
+  const gy = state.glareY / 100 * cH;
+
+  // Distance controls spread: smaller distance → larger glare
+  const dist = Math.max(10, state.glareDistance);
+  const baseR = Math.max(cW, cH) * (150 / dist);
+
+  // Light source sits at (d·tan θh, d·tan θv, d).
+  // The cross-section of the light cone (a circle) projected onto the screen
+  // plane forms an ellipse:
+  //   • minor semi-axis  = baseR  (perpendicular to the projection direction)
+  //   • major semi-axis  = baseR / cosI  (along the projection direction)
+  //   • cosI = 1 / √(tan²θh + tan²θv + 1)
+  //   • rotation angle φ = atan2(tan θv, tan θh)
+  const ah = state.glareAngleH * Math.PI / 180;
+  const av = state.glareAngleV * Math.PI / 180;
+  const tx = Math.tan(ah);
+  const ty = Math.tan(av);
+  const cosI   = 1 / Math.sqrt(tx * tx + ty * ty + 1);
+  const rMajor = baseR / cosI;   // elongated along light projection
+  const rMinor = baseR;
+  const phi    = Math.atan2(ty, tx); // rotation of major axis
+
+  if (rMajor < 1 || rMinor < 1) return;
+
+  // Render glare onto an offscreen canvas
+  const off = document.createElement('canvas');
+  off.width = cW; off.height = cH;
+  const octx = off.getContext('2d');
+
+  const [r, g, b] = hexRgb(state.glareColor);
+  const intensity = state.glareIntensity / 100;
+
+  octx.save();
+  octx.translate(gx, gy);
+  octx.rotate(phi);
+  octx.scale(rMajor / rMinor, 1); // stretch circle into ellipse along major axis
+
+  // Radial gradient is defined in transformed space → it follows the ellipse
+  const grad = octx.createRadialGradient(0, 0, 0, 0, 0, rMinor);
+  grad.addColorStop(0,    `rgba(${r},${g},${b},${intensity.toFixed(3)})`);
+  grad.addColorStop(0.25, `rgba(${r},${g},${b},${(intensity * 0.70).toFixed(3)})`);
+  grad.addColorStop(0.60, `rgba(${r},${g},${b},${(intensity * 0.25).toFixed(3)})`);
+  grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+
+  octx.fillStyle = grad;
+  octx.beginPath();
+  octx.arc(0, 0, rMinor, 0, Math.PI * 2);
+  octx.fill();
+  octx.restore();
+
+  // Composite onto main canvas using screen blend (adds light naturally)
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  if (state.glareBlur > 0) ctx.filter = `blur(${state.glareBlur}px)`;
+  ctx.drawImage(off, 0, 0);
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════════
    MAIN RENDER
 ════════════════════════════════════════════ */
 
@@ -1587,6 +1662,9 @@ function doRender() {
   // Apply texture overlay
   applyTexture(ctx, cW, cH, state.texture, state.textureIntensity);
 
+  // Screen glare overlay
+  applyGlare(ctx, cW, cH);
+
   // Watermark
   if (showWatermark) {
     const wmText = 'github.com/Mansiper/CodeShot';
@@ -1850,6 +1928,15 @@ function buildCurlCommand() {
   pushIfChanged('md_heading_color', toHexParam(state.mdHeadingColor), 'e2c08d');
   pushIfChanged('md_link_color', toHexParam(state.mdLinkColor), '61afef');
   pushIfChanged('watermark', showWatermark, false);
+  pushIfChanged('glare', state.glareEnabled, false);
+  pushIfChanged('glare_x', state.glareX, DEFAULTS.glareX);
+  pushIfChanged('glare_y', state.glareY, DEFAULTS.glareY);
+  pushIfChanged('glare_distance', state.glareDistance, DEFAULTS.glareDistance);
+  pushIfChanged('glare_angle_h', state.glareAngleH, DEFAULTS.glareAngleH);
+  pushIfChanged('glare_angle_v', state.glareAngleV, DEFAULTS.glareAngleV);
+  pushIfChanged('glare_blur', state.glareBlur, DEFAULTS.glareBlur);
+  pushIfChanged('glare_intensity', state.glareIntensity, DEFAULTS.glareIntensity);
+  pushIfChanged('glare_color', toHexParam(state.glareColor), 'ffffff');
 
   const query = params
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
@@ -2136,6 +2223,18 @@ function syncUI() {
   setRange('texture-intensity', state.textureIntensity, 'texture-intensity-val', v => v + '%');
   document.getElementById('texture-intensity-wrap').style.opacity = state.texture === 'none' ? '0.35' : '1';
 
+  // Screen Glare
+  setSwitch('glare-switch', state.glareEnabled);
+  document.getElementById('glare-controls').style.opacity = state.glareEnabled ? '1' : '0.35';
+  setRange('glare-x', state.glareX, 'glare-x-val', v => v + '%');
+  setRange('glare-y', state.glareY, 'glare-y-val', v => v + '%');
+  setRange('glare-distance', state.glareDistance, 'glare-distance-val', v => v);
+  setRange('glare-angle-h', state.glareAngleH, 'glare-angle-h-val', v => v + '°');
+  setRange('glare-angle-v', state.glareAngleV, 'glare-angle-v-val', v => v + '°');
+  setRange('glare-blur', state.glareBlur, 'glare-blur-val', v => v + 'px');
+  setRange('glare-intensity', state.glareIntensity, 'glare-intensity-val', v => v + '%');
+  document.getElementById('glare-color').value = state.glareColor;
+
   // Selection
   document.getElementById('selection-color').value = state.selectionColor;
   setRange('selection-opacity', state.selectionOpacity, 'selection-opacity-val', v => v + '%');
@@ -2329,6 +2428,32 @@ function bindEvents() {
     change('texture', b.dataset.texture); syncUI();
   });
   bindR('texture-intensity', 'textureIntensity', 'texture-intensity-val', v => v + '%');
+
+  // Screen Glare
+  document.getElementById('glare-switch').addEventListener('click', () => {
+    change('glareEnabled', !state.glareEnabled);
+    setSwitch('glare-switch', state.glareEnabled);
+    document.getElementById('glare-controls').style.opacity = state.glareEnabled ? '1' : '0.35';
+  });
+  bindR('glare-x', 'glareX', 'glare-x-val', v => v + '%');
+  bindR('glare-y', 'glareY', 'glare-y-val', v => v + '%');
+  bindR('glare-distance', 'glareDistance', 'glare-distance-val', v => v);
+  bindR('glare-angle-h', 'glareAngleH', 'glare-angle-h-val', v => v + '°');
+  bindR('glare-angle-v', 'glareAngleV', 'glare-angle-v-val', v => v + '°');
+  bindR('glare-blur', 'glareBlur', 'glare-blur-val', v => v + 'px');
+  bindR('glare-intensity', 'glareIntensity', 'glare-intensity-val', v => v + '%');
+  document.getElementById('glare-color').addEventListener('input', e => change('glareColor', e.target.value));
+  document.getElementById('reset-glare').addEventListener('click', () => {
+    state.glareX = DEFAULTS.glareX;
+    state.glareY = DEFAULTS.glareY;
+    state.glareDistance = DEFAULTS.glareDistance;
+    state.glareAngleH = DEFAULTS.glareAngleH;
+    state.glareAngleV = DEFAULTS.glareAngleV;
+    state.glareBlur = DEFAULTS.glareBlur;
+    state.glareIntensity = DEFAULTS.glareIntensity;
+    state.glareColor = DEFAULTS.glareColor;
+    syncUI(); scheduleRender(); scheduleSave();
+  });
 
   // Switches
   function bindSwitch(id, key) {

@@ -205,6 +205,27 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=bas
 | `plain_font` | string | `Arial` | Font family |
 | `text_align` | string | `left` | `left` `center` `right` `justify` |
 
+### Markdown Mode (`mode=markdown`)
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `md_heading_color` | hex | `e2c08d` | Heading color (no `#`) |
+| `md_link_color` | hex | `61afef` | Link color (no `#`) |
+
+### Screen Glare
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `glare` | bool | `false` | Enable screen glare overlay |
+| `glare_x` | number | `50` | Glare center X as % of canvas width — can go from −50 to 150 (outside canvas) |
+| `glare_y` | number | `50` | Glare center Y as % of canvas height — can go from −50 to 150 |
+| `glare_distance` | number | `200` | Distance of light source from screen. Smaller = larger, softer glare (range 10–500) |
+| `glare_angle_h` | number | `0` | Horizontal tilt of the light source in degrees. 0 = perpendicular (circle); positive = light tilts right, elongating the glare horizontally (−75 to 75) |
+| `glare_angle_v` | number | `0` | Vertical tilt of the light source in degrees. 0 = perpendicular (circle); positive = light tilts down, elongating the glare vertically (−75 to 75) |
+| `glare_blur` | number | `30` | Blur radius applied to the glare in px (0–100) |
+| `glare_intensity` | number | `60` | Glare brightness 0–100 % |
+| `glare_color` | hex | `ffffff` | Glare color (no `#`) |
+
 ### Output
 
 | Param | Type | Default | Description |
