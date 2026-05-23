@@ -43,9 +43,10 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Export scale** — 1×, 2×, 3×, 4× output multiplier for high-DPI images
 - **Aspect ratio** — lock the output canvas to 16:9, 4:3, 1:1, 9:16, and more; background is padded to fit
 - **Window opacity**
-- **Copy to clipboard** or **Export** to one of 5 formats
+- **Copy to clipboard** or **Export** to one of 6 formats (PNG, JPG, WebP, GIF, TIFF, Base64)
 - **Settings auto-saved** to `localStorage` — your config persists across sessions
 - **Settings presets** — save current settings under a name, load or delete saved presets
+- **Randomize parameters** — generate a random combination of all visual settings with one click
 - **Light/dark UI** toggle
 - **Resizable** editor/preview split pane
 - Zero backend — runs entirely in the browser

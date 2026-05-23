@@ -88,7 +88,7 @@ const VALID_TEXTURES = [
   'scanlines','glitter','noise','dots','grid','diagonal','crosshatch','hex',
   'concrete','denim','vignette','frosted',
 ];
-const VALID_FORMATS  = ['png','jpg','gif','tiff','base64'];
+const VALID_FORMATS  = ['png','jpg','webp','gif','tiff','base64'];
 const VALID_SCALES   = [1, 2, 3, 4];
 const VALID_ASPECTS  = ['custom','16:9','3:2','4:3','5:4','1:1','4:5','3:4','2:3','9:16'];
 const VALID_BLUR_DIR = ['top','bottom','left','right'];
@@ -169,6 +169,115 @@ function buildState(q, code) {
   };
 }
 
+// ─── Random-state builder ─────────────────────────────────────────────────────
+
+const GRADIENT_PRESETS = [
+  ['#0f0c29','#302b63',135],['#0a0a2e','#1a0533',180],['#001f3f','#0a3d62',150],
+  ['#1a0000','#3d0000',160],['#001a00','#003300',140],['#1a1a2e','#0f3460',135],
+  ['#2d1b69','#11998e',120],['#141e30','#243b55',180],['#16213e','#e94560',135],
+  ['#373b44','#4286f4',150],
+];
+const CODE_FONTS = [
+  'Courier New','DM Mono','Fira Code','Inconsolata','JetBrains Mono',
+  'Roboto Mono','Source Code Pro','Space Mono','monospace','Ubuntu Mono',
+];
+
+function buildRandomState(q, code) {
+  const base  = buildState(q, code);
+  const pick  = arr => arr[Math.floor(Math.random() * arr.length)];
+  const rnd   = (min, max, step = 1) => {
+    const steps = Math.floor((max - min) / step);
+    return min + Math.floor(Math.random() * (steps + 1)) * step;
+  };
+  const rndF  = (min, max, dec = 1) => parseFloat((min + Math.random() * (max - min)).toFixed(dec));
+  const hexB  = n => n.toString(16).padStart(2, '0');
+  const rgb   = (r, g, b) => '#' + hexB(r) + hexB(g) + hexB(b);
+
+  // Theme
+  base.theme = pick(VALID_THEMES);
+
+  // Background
+  const bgPreset  = pick(GRADIENT_PRESETS);
+  base.bgType     = Math.random() < 0.15 ? 'solid' : 'gradient';
+  base.bgSolid    = rgb(rnd(0, 40), rnd(0, 40), rnd(0, 80));
+  base.gradC1     = bgPreset[0];
+  base.gradC2     = bgPreset[1];
+  base.gradAngle  = bgPreset[2];
+
+  // Font
+  base.font          = pick(CODE_FONTS);
+  base.fontSize      = rnd(11, 18);
+  base.lineHeight    = rndF(1.4, 2.0, 1);
+  base.ligatures     = Math.random() > 0.3;
+  base.letterSpacing = 0;
+
+  // Layout
+  base.outerPadding = rnd(24, 100, 4);
+  base.innerPadding = rnd(16, 60, 2);
+  base.cornerRadius = rnd(0, 28, 2);
+
+  // Chrome
+  base.chromeStyle = pick(VALID_CHROME);
+
+  // Shadow
+  base.showShadow = Math.random() > 0.2;
+  base.shadowBlur = rnd(10, 60, 2);
+
+  // Window opacity (usually full)
+  base.windowOpacity = Math.random() > 0.8 ? rnd(60, 95, 5) : 100;
+
+  // Filter
+  base.filter          = pick(VALID_FILTERS);
+  base.filterIntensity = rnd(50, 100);
+
+  // Texture
+  if (Math.random() < 0.5) {
+    base.texture          = pick(VALID_TEXTURES.filter(t => t !== 'none'));
+    base.textureIntensity = rnd(20, 70);
+  } else {
+    base.texture = 'none';
+  }
+
+  // Screen glare (30% chance)
+  if (Math.random() < 0.3) {
+    base.glareEnabled   = true;
+    base.glareX         = rnd(20, 80);
+    base.glareY         = rnd(10, 60);
+    base.glareDistance  = rnd(100, 400, 10);
+    base.glareIntensity = rnd(30, 70);
+    base.glareBlur      = rnd(10, 50);
+    base.glareAngleH    = rnd(-30, 30);
+    base.glareAngleV    = rnd(-30, 30);
+    base.glareColor     = '#ffffff';
+  } else {
+    base.glareEnabled = false;
+  }
+
+  // 3-D tilt (20% chance)
+  if (Math.random() < 0.2) {
+    base.tiltAngle   = rnd(-15, 15);
+    base.depthAngle  = rnd(-15, 15);
+    base.depthAngleY = rnd(-15, 15);
+  } else {
+    base.tiltAngle = 0; base.depthAngle = 0; base.depthAngleY = 0;
+  }
+
+  // Aspect ratio
+  base.aspectRatio = pick(['custom','custom','custom','16:9','4:3','1:1']);
+
+  // Reset transform/layout params that are not randomized
+  base.zoom           = 100;
+  base.trapLeft       = 100; base.trapRight  = 100;
+  base.trapTop        = 100; base.trapBottom = 100;
+  base.gradBlur       = false;
+  base.lensAmount     = 0;
+  base.windowOffsetX  = 0;
+  base.windowOffsetY  = 0;
+  base.scaleMultiplier = 1;
+
+  return base;
+}
+
 // ─── POST / — render endpoint ─────────────────────────────────────────────────
 
 app.post('/', async (req, res) => {
@@ -180,7 +289,8 @@ app.post('/', async (req, res) => {
   const q         = req.query;
   const imgFormat = parseEnum(q.img_format, VALID_FORMATS, 'png');
   const watermark = parseBool(q.watermark, false);
-  const stateData = buildState(q, code);
+  const random    = q.random !== undefined && q.random !== 'false' && q.random !== '0';
+  const stateData = random ? buildRandomState(q, code) : buildState(q, code);
 
   let browser;
   try {
@@ -245,6 +355,10 @@ app.post('/', async (req, res) => {
         return tmp.toDataURL('image/jpeg', 0.95);
       }
 
+      if (format === 'webp') {
+        return canvas.toDataURL('image/webp', 0.95);
+      }
+
       if (format === 'base64') {
         // Return the raw data-URL string; caller receives it as text/plain
         return canvas.toDataURL('image/png');
@@ -296,7 +410,7 @@ app.post('/', async (req, res) => {
 
     const mime   = match[1];
     const buffer = Buffer.from(match[2], 'base64');
-    const extMap = { png: 'png', jpg: 'jpg', gif: 'gif', tiff: 'tiff' };
+    const extMap = { png: 'png', jpg: 'jpg', webp: 'webp', gif: 'gif', tiff: 'tiff' };
     const ext    = extMap[imgFormat] || 'png';
 
     res.setHeader('Content-Type', mime);
@@ -399,9 +513,11 @@ app.get('/api/info', (_req, res) => {
       // ── Export size ────────────────────────────────────────────────────────
       scale:              { type: 'number',  values: VALID_SCALES,         default: 1,                description: 'Output scale multiplier — all pixel dimensions are multiplied by this value (1, 2, 3, or 4)' },
       aspect_ratio:       { type: 'string',  values: VALID_ASPECTS,        default: 'custom',         description: 'Lock the output canvas to a fixed aspect ratio by padding the background. "custom" = no padding.' },
+      // ── Randomize ──────────────────────────────────────────────────────────
+      random:             { type: 'bool',                                   default: false,            description: 'Randomize all visual parameters. Only img_format and watermark are respected from the query string; everything else is chosen randomly.' },
       // ── Output ─────────────────────────────────────────────────────────────
       watermark:          { type: 'bool',                                   default: false,            description: 'Overlay the CodeShot watermark' },
-      img_format:         { type: 'string',  values: VALID_FORMATS,        default: 'png',            description: 'Output format (base64 returns a text/plain data-URL)' },
+      img_format:         { type: 'string',  values: VALID_FORMATS,        default: 'png',            description: 'Output format: png · jpg · webp · gif · tiff · base64 (base64 returns a text/plain data-URL)' },
     },
     examples: [
       'curl -X POST "http://localhost:3000/?lang=javascript&theme=dracula&img_format=png" \\\n  -H "Content-Type: text/plain" \\\n  --data-binary "@script.js" -o screenshot.png',

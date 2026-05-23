@@ -1,6 +1,6 @@
 # CodeShot — Node.js API Server
 
-An HTTP API that renders [CodeShot](https://github.com/Mansiper/CodeShot) screenshots server-side and returns a binary image. Send your code as a plain-text POST body, get a PNG/JPG/GIF/TIFF/Base64 image back — perfect for CI pipelines, bots, or any automation.
+An HTTP API that renders [CodeShot](https://github.com/Mansiper/CodeShot) screenshots server-side and returns a binary image. Send your code as a plain-text POST body, get a PNG/JPG/WebP/GIF/TIFF/Base64 image back — perfect for CI pipelines, bots, or any automation.
 
 **Hosted at: [https://codeshot-u1ol.onrender.com](https://codeshot-u1ol.onrender.com)**
 
@@ -46,6 +46,24 @@ PORT=8080 node server.js
 Replace `https://codeshot-u1ol.onrender.com` with `http://localhost:3000` if running locally.
 
 ```bash
+# Random visual style — PNG output (default)
+curl -X POST "https://codeshot-u1ol.onrender.com/?random" \
+     -H "Content-Type: text/plain" \
+     --data-binary "@script.js" \
+     -o screenshot.png
+
+# Random visual style — WebP output, no watermark
+curl -X POST "https://codeshot-u1ol.onrender.com/?random&img_format=webp&watermark=false" \
+     -H "Content-Type: text/plain" \
+     --data-binary "@script.js" \
+     -o screenshot.webp
+
+# JavaScript, Dracula theme, WebP output
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=javascript&theme=dracula&img_format=webp" \
+     -H "Content-Type: text/plain" \
+     --data-binary "@script.js" \
+     -o screenshot.webp
+
 # Basic — JavaScript, Dracula theme, PNG output
 curl -X POST "https://codeshot-u1ol.onrender.com/?lang=javascript&theme=dracula&img_format=png" \
      -H "Content-Type: text/plain" \
@@ -247,12 +265,18 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 | `scale` | number | `1` | Output scale multiplier — all pixel dimensions are multiplied. `1` `2` `3` `4` |
 | `aspect_ratio` | string | `custom` | Lock the output canvas to a fixed aspect ratio by padding the background. `custom` (no padding) · `16:9` · `3:2` · `4:3` · `5:4` · `1:1` · `4:5` · `3:4` · `2:3` · `9:16` |
 
+### Randomize
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `random` | bool | `false` | Randomize all visual parameters. Only `img_format` and `watermark` are taken from the query string; everything else (theme, background, font, layout, effects, …) is chosen randomly. |
+
 ### Output
 
 | Param | Type | Default | Description |
 |---|---|---|---|
 | `watermark` | bool | `false` | Overlay the CodeShot watermark |
-| `img_format` | string | `png` | `png` `jpg` `gif` `tiff` `base64` |
+| `img_format` | string | `png` | `png` `jpg` `webp` `gif` `tiff` `base64` |
 
 ---
 
