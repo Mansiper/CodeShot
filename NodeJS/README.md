@@ -226,6 +226,12 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=bas
 | `glare_intensity` | number | `60` | Glare brightness 0–100 % |
 | `glare_color` | hex | `ffffff` | Glare color (no `#`) |
 
+### Lens Distortion
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `lens` | number | `0` | Lens distortion intensity. Positive = convex/barrel (center magnified), negative = concave/pincushion (transparent corners), 0 = flat. Range −100 to 100. |
+
 ### Output
 
 | Param | Type | Default | Description |

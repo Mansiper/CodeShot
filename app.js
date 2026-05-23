@@ -153,6 +153,7 @@ const DEFAULTS = {
   glareBlur: 30,
   glareIntensity: 60,
   glareColor: '#ffffff',
+  lensAmount: 0,
 };
 
 let state = { ...DEFAULTS };
@@ -1038,6 +1039,56 @@ function applyGlare(ctx, cW, cH) {
 }
 
 /* ════════════════════════════════════════════
+   LENS DISTORTION
+════════════════════════════════════════════ */
+
+function applyLens(src, amount) {
+  if (amount === 0) return src;
+  const W = src.width, H = src.height;
+  const dst = document.createElement('canvas');
+  dst.width = W; dst.height = H;
+  const sctx = src.getContext('2d');
+  const srcData = sctx.getImageData(0, 0, W, H).data;
+  const dctx = dst.getContext('2d');
+  const dstImgData = dctx.createImageData(W, H);
+  const dstData = dstImgData.data;
+  const cx = W / 2, cy = H / 2;
+  // k > 0 → barrel (convex, +), k < 0 → pincushion (concave, −)
+  const k = amount / 200;
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const nx = (x - cx) / cx;
+      const ny = (y - cy) / cy;
+      const r2 = nx * nx + ny * ny;
+      const factor = 1 - k * r2;
+      const sx = cx + nx * factor * cx;
+      const sy = cy + ny * factor * cy;
+      const x0 = sx | 0, y0 = sy | 0;
+      const x1 = x0 + 1, y1 = y0 + 1;
+      const fx = sx - x0, fy = sy - y0;
+      const di = (y * W + x) * 4;
+      if (x0 >= 0 && x1 < W && y0 >= 0 && y1 < H) {
+        for (let c = 0; c < 4; c++) {
+          const v00 = srcData[(y0 * W + x0) * 4 + c];
+          const v10 = srcData[(y0 * W + x1) * 4 + c];
+          const v01 = srcData[(y1 * W + x0) * 4 + c];
+          const v11 = srcData[(y1 * W + x1) * 4 + c];
+          dstData[di + c] = (v00*(1-fx)*(1-fy) + v10*fx*(1-fy) + v01*(1-fx)*fy + v11*fx*fy) | 0;
+        }
+      } else if (x0 >= 0 && x0 < W && y0 >= 0 && y0 < H) {
+        const si = (y0 * W + x0) * 4;
+        dstData[di] = srcData[si]; dstData[di+1] = srcData[si+1];
+        dstData[di+2] = srcData[si+2]; dstData[di+3] = srcData[si+3];
+      }
+      // else: out of bounds → transparent
+    }
+  }
+  dctx.putImageData(dstImgData, 0, 0);
+  return dst;
+}
+
+/* ════════════════════════════════════════════
    MAIN RENDER
 ════════════════════════════════════════════ */
 
@@ -1599,6 +1650,11 @@ function doRender() {
     off = applyGradientBlur(off, state.gradBlurDir, state.gradBlurAmount, state.gradBlurStart);
   }
 
+  // Apply lens distortion
+  if (state.lensAmount !== 0) {
+    off = applyLens(off, state.lensAmount);
+  }
+
   const iw = off.width, ih = off.height;
   const op = state.outerPadding;
   const cW = baseW + op * 2;  // fixed — background ignores zoom
@@ -1937,6 +1993,7 @@ function buildCurlCommand() {
   pushIfChanged('glare_blur', state.glareBlur, DEFAULTS.glareBlur);
   pushIfChanged('glare_intensity', state.glareIntensity, DEFAULTS.glareIntensity);
   pushIfChanged('glare_color', toHexParam(state.glareColor), 'ffffff');
+  pushIfChanged('lens', state.lensAmount, 0);
 
   const query = params
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
@@ -2242,6 +2299,9 @@ function syncUI() {
   // Watermark
   setSwitch('watermark-switch', showWatermark);
 
+  // Lens
+  setRange('lens-amount', state.lensAmount, 'lens-amount-val', v => { const n = Math.round(v); return n > 0 ? '+' + n : String(n); });
+
   applyEditorTheme();
   updateEditorHighlight();
 }
@@ -2351,6 +2411,7 @@ function bindEvents() {
   bindR('window-opacity', 'windowOpacity', 'window-opacity-val', v => v + '%');
   bindR('window-offset-x', 'windowOffsetX', 'window-offset-x-val', v => v + '%');
   bindR('window-offset-y', 'windowOffsetY', 'window-offset-y-val', v => v + '%');
+  bindR('lens-amount', 'lensAmount', 'lens-amount-val', v => { const n = Math.round(v); return n > 0 ? '+' + n : String(n); });
 
   // Colors
   document.getElementById('bg-solid-color').addEventListener('input', e => change('bgSolid', e.target.value));
@@ -2490,6 +2551,10 @@ function bindEvents() {
   });
   document.getElementById('reset-trap').addEventListener('click', () => {
     state.trapLeft=100; state.trapRight=100; state.trapTop=100; state.trapBottom=100;
+    syncUI(); scheduleRender(); scheduleSave();
+  });
+  document.getElementById('reset-lens').addEventListener('click', () => {
+    state.lensAmount = 0;
     syncUI(); scheduleRender(); scheduleSave();
   });
   document.getElementById('reset-params-btn').addEventListener('click', () => {

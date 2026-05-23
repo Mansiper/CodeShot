@@ -149,6 +149,8 @@ function buildState(q, code) {
     glareBlur:        parseNum (q.glare_blur,       30),
     glareIntensity:   parseNum (q.glare_intensity,  60),
     glareColor:       parseHex (q.glare_color)                    || '#ffffff',
+    // Lens distortion
+    lensAmount:       parseNum (q.lens,             0),
     // keep selection clear; not applicable in API context
     selectionColor:   '#6490ff',
     selectionOpacity: 0,
@@ -379,7 +381,9 @@ app.get('/api/info', (_req, res) => {
       glare_angle_v:      { type: 'number',  range: '-75–75',              default: 0,                description: 'Vertical angle — tilts ellipse height (0 = circle)' },
       glare_blur:         { type: 'number',  range: '0–100',               default: 30,               description: 'Blur radius applied to the glare in px' },
       glare_intensity:    { type: 'number',  range: '0–100',               default: 60,               description: 'Glare brightness 0–100%' },
-      glare_color:        { type: 'hex',     example: 'ffffff',            default: 'ffffff',         description: 'Glare color (no #)' },      // ── Output ─────────────────────────────────────────────────────────────
+      glare_color:        { type: 'hex',     example: 'ffffff',            default: 'ffffff',         description: 'Glare color (no #)' },      // ── Lens distortion ────────────────────────────────────────────────────
+      lens:               { type: 'number',  range: '-100–100',            default: 0,                description: 'Lens distortion: positive = convex/barrel, negative = concave/pincushion, 0 = flat' },
+      // ── Output ─────────────────────────────────────────────────────────────
       watermark:          { type: 'bool',                                   default: false,            description: 'Overlay the CodeShot watermark' },
       img_format:         { type: 'string',  values: VALID_FORMATS,        default: 'png',            description: 'Output format (base64 returns a text/plain data-URL)' },
     },

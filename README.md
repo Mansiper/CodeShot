@@ -28,6 +28,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Window offset** — adjust X/Y position of the window within the frame
 - **3D transform** — rotate Z, depth X/Y perspective
 - **Trapezoid distortion** — warp the frame edges independently
+- **Lens effect** — convex (+) barrel or concave (−) pincushion distortion that physically curves the window shape
 - **Gradient blur** — directional blur fade from any edge
 - **Filters** — B&W, Sepia, Cool, Warm, Faded, Vivid, Cinematic, Noir, Amber
 - **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter
