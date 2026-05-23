@@ -89,6 +89,8 @@ const VALID_TEXTURES = [
   'concrete','denim','vignette','frosted',
 ];
 const VALID_FORMATS  = ['png','jpg','gif','tiff','base64'];
+const VALID_SCALES   = [1, 2, 3, 4];
+const VALID_ASPECTS  = ['custom','16:9','3:2','4:3','5:4','1:1','4:5','3:4','2:3','9:16'];
 const VALID_BLUR_DIR = ['top','bottom','left','right'];
 const VALID_ALIGN    = ['left','center','right','justify'];
 
@@ -158,6 +160,9 @@ function buildState(q, code) {
     glareColor:       parseHex (q.glare_color)                    || '#ffffff',
     // Lens distortion
     lensAmount:       parseNum (q.lens,             0),
+    // Scale & aspect ratio
+    scaleMultiplier:  VALID_SCALES.includes(parseNum(q.scale, 1)) ? parseNum(q.scale, 1) : 1,
+    aspectRatio:      parseEnum(q.aspect_ratio, VALID_ASPECTS, 'custom'),
     // keep selection clear; not applicable in API context
     selectionColor:   '#6490ff',
     selectionOpacity: 0,
@@ -391,6 +396,9 @@ app.get('/api/info', (_req, res) => {
       glare_intensity:    { type: 'number',  range: '0–100',               default: 60,               description: 'Glare brightness 0–100%' },
       glare_color:        { type: 'hex',     example: 'ffffff',            default: 'ffffff',         description: 'Glare color (no #)' },      // ── Lens distortion ────────────────────────────────────────────────────
       lens:               { type: 'number',  range: '-100–100',            default: 0,                description: 'Lens distortion: positive = convex/barrel, negative = concave/pincushion, 0 = flat' },
+      // ── Export size ────────────────────────────────────────────────────────
+      scale:              { type: 'number',  values: VALID_SCALES,         default: 1,                description: 'Output scale multiplier — all pixel dimensions are multiplied by this value (1, 2, 3, or 4)' },
+      aspect_ratio:       { type: 'string',  values: VALID_ASPECTS,        default: 'custom',         description: 'Lock the output canvas to a fixed aspect ratio by padding the background. "custom" = no padding.' },
       // ── Output ─────────────────────────────────────────────────────────────
       watermark:          { type: 'bool',                                   default: false,            description: 'Overlay the CodeShot watermark' },
       img_format:         { type: 'string',  values: VALID_FORMATS,        default: 'png',            description: 'Output format (base64 returns a text/plain data-URL)' },

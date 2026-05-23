@@ -75,6 +75,11 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=sql&depth=12&grad_c1=141e
 # Base64 data-URL (returned as plain text)
 curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=base64" \
      --data-binary "@index.ts"
+
+# 2× scale, 16:9 aspect ratio, PNG
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scale=2&aspect_ratio=16:9&img_format=png" \
+     -d "print('hello world')" \
+     -o screenshot_2x_16x9.png
 ```
 
 ---
@@ -234,6 +239,13 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=bas
 | Param | Type | Default | Description |
 |---|---|---|---|
 | `lens` | number | `0` | Lens distortion intensity. Positive = convex/barrel (center magnified), negative = concave/pincushion (transparent corners), 0 = flat. Range −100 to 100. |
+
+### Export Size
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `scale` | number | `1` | Output scale multiplier — all pixel dimensions are multiplied. `1` `2` `3` `4` |
+| `aspect_ratio` | string | `custom` | Lock the output canvas to a fixed aspect ratio by padding the background. `custom` (no padding) · `16:9` · `3:2` · `4:3` · `5:4` · `1:1` · `4:5` · `3:4` · `2:3` · `9:16` |
 
 ### Output
 

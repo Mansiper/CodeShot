@@ -40,6 +40,8 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Selection highlight** with custom color and opacity
 - **Line numbers** toggle with configurable first line number and font color
 - **Zoom** from 50% to 300%
+- **Export scale** — 1×, 2×, 3×, 4× output multiplier for high-DPI images
+- **Aspect ratio** — lock the output canvas to 16:9, 4:3, 1:1, 9:16, and more; background is padded to fit
 - **Window opacity**
 - **Copy to clipboard** or **Export** to one of 5 formats
 - **Settings auto-saved** to `localStorage` — your config persists across sessions
