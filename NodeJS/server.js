@@ -287,10 +287,11 @@ app.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Request body must contain source code as plain text.' });
   }
 
-  const q         = req.query;
-  const imgFormat = parseEnum(q.img_format, VALID_FORMATS, 'png');
-  const watermark = parseBool(q.watermark, false);
-  const random    = q.random !== undefined && q.random !== 'false' && q.random !== '0';
+  const q          = req.query;
+  const imgFormat  = parseEnum(q.img_format, VALID_FORMATS, 'png');
+  const watermark  = parseBool(q.watermark, false);
+  const random     = q.random !== undefined && q.random !== 'false' && q.random !== '0';
+  const jpgQuality = Math.min(100, Math.max(1, parseNum(q.jpg_quality, 92))) / 100;
   const stateData = random ? buildRandomState(q, code) : buildState(q, code);
 
   let browser;
@@ -318,7 +319,7 @@ app.post('/', async (req, res) => {
     await page.waitForFunction(() => typeof hljs !== 'undefined', { timeout: 10_000 });
 
     // Drive the in-browser renderer and capture the canvas as a data-URL
-    const dataURL = await page.evaluate(async (stateOverride, format, wm) => {
+    const dataURL = await page.evaluate(async (stateOverride, format, wm, jpgQ) => {
       // Wait for web fonts (Google Fonts CDN) to finish loading
       await document.fonts.ready;
 
@@ -353,7 +354,7 @@ app.post('/', async (req, res) => {
         c.fillStyle = '#ffffff';
         c.fillRect(0, 0, tmp.width, tmp.height);
         c.drawImage(canvas, 0, 0);
-        return tmp.toDataURL('image/jpeg', 0.95);
+        return tmp.toDataURL('image/jpeg', jpgQ);
       }
 
       if (format === 'webp') {
@@ -388,7 +389,7 @@ app.post('/', async (req, res) => {
       }
 
       return null;
-    }, stateData, imgFormat, watermark);
+    }, stateData, imgFormat, watermark, jpgQuality);
 
     await browser.close();
     browser = null;

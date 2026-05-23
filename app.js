@@ -2011,7 +2011,8 @@ function exportAs(fmt) {
           const c = tmp.getContext('2d');
           c.fillStyle = '#ffffff'; c.fillRect(0,0,tmp.width,tmp.height);
           c.drawImage(canvas,0,0);
-          return tmp.toDataURL(mime, 0.95);
+          const q = (exportAs._jpgQuality !== undefined ? exportAs._jpgQuality : 92) / 100;
+          return tmp.toDataURL(mime, q);
         })()
       : canvas.toDataURL(mime);
     const a = document.createElement('a');
@@ -2851,6 +2852,25 @@ function bindEvents() {
   document.getElementById('randomize-btn').addEventListener('click', randomizeParams);
   document.getElementById('export-btn').addEventListener('click', () => exportAs('png'));
   document.getElementById('copy-btn').addEventListener('click', () => copyAs('png'));
+
+  // JPG quality modal
+  const jpgOverlay  = document.getElementById('jpg-quality-overlay');
+  const jpgSlider   = document.getElementById('jpg-quality-slider');
+  const jpgValLabel = document.getElementById('jpg-quality-val');
+  function openJpgModal(onConfirm) {
+    jpgOverlay.classList.add('open');
+    jpgOverlay._onConfirm = onConfirm;
+  }
+  function closeJpgModal() { jpgOverlay.classList.remove('open'); }
+  jpgSlider.addEventListener('input', () => { jpgValLabel.textContent = jpgSlider.value + '%'; });
+  document.getElementById('jpg-quality-export').addEventListener('click', () => {
+    exportAs._jpgQuality = parseInt(jpgSlider.value, 10);
+    closeJpgModal();
+    if (jpgOverlay._onConfirm) jpgOverlay._onConfirm();
+  });
+  document.getElementById('jpg-quality-cancel').addEventListener('click', closeJpgModal);
+  jpgOverlay.addEventListener('click', e => { if (e.target === jpgOverlay) closeJpgModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeJpgModal(); });
   document.getElementById('clear-btn').addEventListener('click', () => {
     document.getElementById('code-input').value=''; changeCode('');
   });
@@ -2892,8 +2912,15 @@ function bindEvents() {
       item.addEventListener('click', () => {
         const fmt = item.dataset.fmt;
         dropdown.classList.remove('open');
-        if (id === 'export') exportAs(fmt);
-        else copyAs(fmt);
+        if (id === 'export') {
+          if (fmt === 'jpg') {
+            openJpgModal(() => exportAs('jpg'));
+          } else {
+            exportAs(fmt);
+          }
+        } else {
+          copyAs(fmt);
+        }
       });
     });
   });

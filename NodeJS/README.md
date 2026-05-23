@@ -70,10 +70,15 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=javascript&theme=dracula&
      --data-binary "@script.js" \
      -o screenshot.png
 
-# Python, Monokai, Windows chrome, JPG
+# Python, Monokai, Windows chrome, JPG (default quality 92)
 curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=monokai&chrome=windows&img_format=jpg" \
      -d "print('hello world')" \
      -o screenshot.jpg
+
+# JPG with custom quality (70%)
+curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=monokai&img_format=jpg&jpg_quality=70" \
+     -d "print('hello world')" \
+     -o screenshot_q70.jpg
 
 # Rust, Nord, solid background, Cool filter, PNG
 curl -X POST "https://codeshot-u1ol.onrender.com/?lang=rust&theme=nord&bg=solid&bg_color=1a1b2e&filter=cool&img_format=png" \
@@ -277,6 +282,7 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 |---|---|---|---|
 | `watermark` | bool | `false` | Overlay the CodeShot watermark |
 | `img_format` | string | `png` | `png` `jpg` `webp` `gif` `tiff` `base64` |
+| `jpg_quality` | number | `92` | JPG compression quality 1–100. Only used when `img_format=jpg` |
 
 ---
 

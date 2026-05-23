@@ -572,6 +572,25 @@
 
   </div>
 </div>
+
+<!-- JPG Quality Modal -->
+<div id="jpg-quality-overlay">
+  <div id="jpg-quality-modal">
+    <div class="jpg-modal-title">JPG Export Quality</div>
+    <div class="field">
+      <div class="field-label">Quality <span class="field-value" id="jpg-quality-val">92%</span></div>
+      <input type="range" id="jpg-quality-slider" min="1" max="100" value="92">
+    </div>
+    <div class="jpg-modal-footer">
+      <button class="btn" id="jpg-quality-cancel">Cancel</button>
+      <button class="btn btn-primary" id="jpg-quality-export">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export JPG
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>
