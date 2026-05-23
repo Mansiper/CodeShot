@@ -170,6 +170,9 @@ const DEFAULTS = {
   glareIntensity: 60,
   glareColor: '#ffffff',
   lensAmount: 0,
+  ligatures: true,
+  letterSpacing: 0,
+  tabSize: 4,
 };
 
 let state = { ...DEFAULTS };
@@ -252,11 +255,12 @@ function getTokens() {
 
 function buildLines(tokens) {
   const lines = [[]];
+  const tabStr = ' '.repeat(state.tabSize || 4);
   for (const t of tokens) {
     const parts = t.text.split('\n');
     for (let i = 0; i < parts.length; i++) {
       if (i > 0) lines.push([]);
-      const s = parts[i].replace(/\t/g,'    ');
+      const s = parts[i].replace(/\t/g, tabStr);
       if (s) lines[lines.length-1].push({text:s, color:t.color});
     }
   }
@@ -364,6 +368,17 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
    CODE CANVAS
 ════════════════════════════════════════════ */
 
+function applyTextSettings(ctx) {
+  if ('letterSpacing' in ctx) ctx.letterSpacing = `${state.letterSpacing}px`;
+}
+
+function measureW(ctx, text) {
+  if (state.ligatures || text.length <= 1) return ctx.measureText(text).width;
+  let w = 0;
+  for (const ch of text) w += ctx.measureText(ch).width;
+  return w;
+}
+
 function renderCode() {
   if (state.inputMode === 'markdown') return renderMarkdown();
 
@@ -381,12 +396,13 @@ function renderCode() {
   // Measure
   const mc = document.createElement('canvas').getContext('2d');
   mc.font = fontStr;
+  applyTextSettings(mc);
   const lineNoW = showLineNumbers ? mc.measureText(String(lines.length)+'  ').width : 0;
 
   let maxLineW = 0;
   for (const line of lines) {
     let w = lineNoW;
-    for (const t of line) w += mc.measureText(t.text).width;
+    for (const t of line) w += measureW(mc, t.text);
     maxLineW = Math.max(maxLineW, w);
   }
 
@@ -429,16 +445,17 @@ function renderCode() {
       const raw = rawLines[li] || '';
       const cS = li === s.l ? s.c : 0;
       const cE = li === e.l ? e.c : raw.length;
-      const pre = raw.slice(0, cS).replace(/\t/g, '    ');
-      const sel = raw.slice(cS, cE).replace(/\t/g, '    ');
-      const xOff = ctx.measureText(pre).width;
-      const xW   = sel.length ? ctx.measureText(sel).width : ctx.measureText(' ').width;
+      const pre = raw.slice(0, cS).replace(/\t/g, ' '.repeat(state.tabSize));
+      const sel = raw.slice(cS, cE).replace(/\t/g, ' '.repeat(state.tabSize));
+      const xOff = measureW(ctx, pre);
+      const xW   = sel.length ? measureW(ctx, sel) : measureW(ctx, ' ');
       ctx.fillRect(innerPadding + lineNoW + xOff, innerPadding + chromeH + li * lh - Math.round((fontSize + 1) / 5.5), xW, lh);
     }
   }
 
   // Code
   ctx.font = fontStr; ctx.textBaseline = 'top';
+  applyTextSettings(ctx);
   let y = innerPadding + chromeH;
   for (let li = 0; li < lines.length; li++) {
     let x = innerPadding;
@@ -481,8 +498,15 @@ function renderCode() {
 
     for (const t of lineTokens) {
       ctx.fillStyle = t.color;
-      ctx.fillText(t.text, x, y);
-      x += ctx.measureText(t.text).width;
+      if (state.ligatures) {
+        ctx.fillText(t.text, x, y);
+        x += ctx.measureText(t.text).width;
+      } else {
+        for (const ch of t.text) {
+          ctx.fillText(ch, x, y);
+          x += ctx.measureText(ch).width;
+        }
+      }
     }
     y += lh;
   }
@@ -1334,6 +1358,7 @@ function renderMarkdown() {
   const blocks = parseMdBlocks(state.code || '');
 
   const mc = document.createElement('canvas').getContext('2d');
+  applyTextSettings(mc);
 
   // Measure exact rendered line width for every block type — no fixed sizes
   let maxContentW = 0;
@@ -1341,7 +1366,7 @@ function renderMarkdown() {
     if (b.type === 'code') {
       mc.font = `${fontSize}px "${codeFont}",monospace`;
       for (const cl of b.text.split('\n'))
-        maxContentW = Math.max(maxContentW, mc.measureText(cl.replace(/\t/g, '    ')).width + 24);
+        maxContentW = Math.max(maxContentW, mc.measureText(cl.replace(/\t/g, ' '.repeat(state.tabSize))).width + 24);
     } else if (b.type === 'heading') {
       const hs = Math.round(fontSize * hScale[b.level - 1]);
       maxContentW = Math.max(maxContentW, measureInlineWidth(mc, parseInlineMd(b.text), hs, font, codeFont));
@@ -1406,6 +1431,7 @@ function renderMarkdown() {
   const off = document.createElement('canvas');
   off.width = totalW; off.height = totalH;
   const ctx = off.getContext('2d');
+  applyTextSettings(ctx);
 
   if (cornerRadius > 0) { rrect(ctx, 0, 0, totalW, totalH, cornerRadius); ctx.clip(); }
   ctx.fillStyle = bgColor;
@@ -1489,10 +1515,10 @@ function renderMarkdown() {
             const rawLine = codeLines[li];
             const cS = rawLi === selS.l ? selS.c : 0;
             const cE = rawLi === selE.l ? selE.c : rawLine.length;
-            const pre = rawLine.slice(0, cS).replace(/\t/g, '    ');
-            const sel = rawLine.slice(cS, cE).replace(/\t/g, '    ');
-            const xOff = ctx.measureText(pre).width;
-            const xW   = sel.length ? ctx.measureText(sel).width : ctx.measureText(' ').width;
+            const pre = rawLine.slice(0, cS).replace(/\t/g, ' '.repeat(state.tabSize));
+            const sel = rawLine.slice(cS, cE).replace(/\t/g, ' '.repeat(state.tabSize));
+            const xOff = measureW(ctx, pre);
+            const xW   = sel.length ? measureW(ctx, sel) : measureW(ctx, ' ');
             ctx.fillRect(xBase + 12 + xOff, y + codePadY + li * lh - Math.round((fontSize + 1) / 5.5), xW, lh);
           }
         }
@@ -1508,8 +1534,15 @@ function renderMarkdown() {
             let cx = xBase + 12;
             for (const t of codeBlockLines[li]) {
               ctx.fillStyle = t.color;
-              ctx.fillText(t.text, cx, y + codePadY + li * lh);
-              cx += ctx.measureText(t.text).width;
+              if (state.ligatures) {
+                ctx.fillText(t.text, cx, y + codePadY + li * lh);
+                cx += ctx.measureText(t.text).width;
+              } else {
+                for (const ch of t.text) {
+                  ctx.fillText(ch, cx, y + codePadY + li * lh);
+                  cx += ctx.measureText(ch).width;
+                }
+              }
             }
           }
           hlOk = true;
@@ -1517,7 +1550,18 @@ function renderMarkdown() {
       }
       if (!hlOk) {
         ctx.fillStyle = theme.fg;
-        codeLines.forEach((cl, li) => ctx.fillText(cl.replace(/\t/g, '    '), xBase + 12, y + codePadY + li * lh));
+        codeLines.forEach((cl, li) => {
+          const text = cl.replace(/\t/g, ' '.repeat(state.tabSize));
+          if (state.ligatures) {
+            ctx.fillText(text, xBase + 12, y + codePadY + li * lh);
+          } else {
+            let cx = xBase + 12;
+            for (const ch of text) {
+              ctx.fillText(ch, cx, y + codePadY + li * lh);
+              cx += ctx.measureText(ch).width;
+            }
+          }
+        });
       }
       y += codeH + Math.round(lh * 0.5);
       continue;
@@ -2010,6 +2054,9 @@ function buildCurlCommand() {
   pushIfChanged('glare_intensity', state.glareIntensity, DEFAULTS.glareIntensity);
   pushIfChanged('glare_color', toHexParam(state.glareColor), 'ffffff');
   pushIfChanged('lens', state.lensAmount, 0);
+  pushIfChanged('ligatures', state.ligatures, true);
+  pushIfChanged('letter_spacing', state.letterSpacing, 0);
+  pushIfChanged('tab_size', state.tabSize, 4);
 
   const query = params
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
@@ -2217,6 +2264,10 @@ function syncUI() {
   document.getElementById('font-select').value = state.font;
   setRange('font-size', state.fontSize, 'font-size-val', v=>v+'px');
   setRange('line-height', state.lineHeight, 'line-height-val', v=>v);
+  setSwitch('ligatures-switch', state.ligatures);
+  setRange('letter-spacing', state.letterSpacing, 'letter-spacing-val', v => v + 'px');
+  setRange('tab-size', state.tabSize, 'tab-size-val', v => String(v));
+  document.getElementById('code-input').style.tabSize = state.tabSize;
 
   // Theme
   document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme===state.theme));
@@ -2235,6 +2286,8 @@ function syncUI() {
   document.querySelectorAll('#input-mode-group .toggle-btn')
     .forEach(b => b.classList.toggle('active', b.dataset.val === state.inputMode));
   document.getElementById('lang-wrap').style.display        = (isText || isMd) ? 'none' : '';
+  document.getElementById('ligatures-wrap').style.display   = isText ? 'none' : '';
+  document.getElementById('tab-size-wrap').style.display    = isText ? 'none' : '';
   document.getElementById('theme-wrap').style.display       = isText ? 'none' : '';
   document.getElementById('text-color-wrap').style.display  = (isText || isMd) ? '' : 'none';
   document.getElementById('plain-align-wrap').style.display = isMd ? 'none' : '';
@@ -2397,6 +2450,36 @@ function bindEvents() {
       scheduleRender();
     }
   }
+  document.getElementById('code-input').addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    e.preventDefault();
+    const el = e.target;
+    const { selectionStart: ss, selectionEnd: se, value } = el;
+    const indent = ' '.repeat(state.tabSize);
+    if (!e.shiftKey) {
+      // Insert spaces at cursor / replace selection
+      el.value = value.slice(0, ss) + indent + value.slice(se);
+      el.selectionStart = el.selectionEnd = ss + state.tabSize;
+    } else {
+      // Shift+Tab: remove up to tabSize spaces (or one \t) from each line in the selection
+      const lineStart = value.lastIndexOf('\n', ss - 1) + 1;
+      const lines = value.slice(lineStart, se).split('\n');
+      const dedented = lines.map(l => {
+        if (l.startsWith('\t')) return l.slice(1);
+        let i = 0;
+        while (i < state.tabSize && l[i] === ' ') i++;
+        return l.slice(i);
+      });
+      const removed = lines.join('\n').length - dedented.join('\n').length;
+      el.value = value.slice(0, lineStart) + dedented.join('\n') + value.slice(se);
+      const firstRemoved = lines[0].length - dedented[0].length;
+      el.selectionStart = Math.max(lineStart, ss - firstRemoved);
+      el.selectionEnd = se - removed;
+    }
+    // Trigger the input handler so highlight + state update
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
   document.getElementById('code-input').addEventListener('select', updateSelectionRange);
   document.getElementById('code-input').addEventListener('mouseup', updateSelectionRange);
   document.getElementById('code-input').addEventListener('keyup', updateSelectionRange);
@@ -2431,6 +2514,11 @@ function bindEvents() {
   }
   bindR('font-size','fontSize','font-size-val',v=>v+'px');
   bindR('line-height','lineHeight','line-height-val',v=>v);
+  bindR('letter-spacing','letterSpacing','letter-spacing-val',v=>v+'px');
+  bindR('tab-size','tabSize','tab-size-val',v=>String(v));
+  document.getElementById('tab-size').addEventListener('input', e => {
+    document.getElementById('code-input').style.tabSize = parseFloat(e.target.value);
+  });
   bindR('outer-padding','outerPadding','outer-padding-val',v=>v+'px');
   bindR('inner-padding','innerPadding','inner-padding-val',v=>v+'px');
   bindR('corner-radius','cornerRadius','corner-val',v=>v+'px');
@@ -2568,6 +2656,7 @@ function bindEvents() {
   bindSwitch('lineno-switch','showLineNumbers');
   bindSwitch('shadow-switch','showShadow');
   bindSwitch('gblur-switch','gradBlur');
+  bindSwitch('ligatures-switch','ligatures');
   document.getElementById('watermark-switch').addEventListener('click', () => {
     showWatermark = !showWatermark;
     setSwitch('watermark-switch', showWatermark);

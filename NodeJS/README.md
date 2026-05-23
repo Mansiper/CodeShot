@@ -95,6 +95,9 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=bas
 | `font` | string | `JetBrains_Mono` | Code font. Underscores become spaces (`Ubuntu_Mono` → `Ubuntu Mono`) |
 | `size` | number | `14` | Font size in px |
 | `line_height` | number | `1.6` | Line-height multiplier |
+| `ligatures` | bool | `true` | Enable font ligatures (disable to force character-by-character rendering, preventing ligature substitution) |
+| `letter_spacing` | number | `0` | Letter spacing in px — negative tightens, positive loosens |
+| `tab_size` | number | `4` | Tab width in spaces (1–10) |
 
 ### Theme & Colors
 

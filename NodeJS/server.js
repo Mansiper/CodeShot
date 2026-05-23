@@ -102,6 +102,9 @@ function buildState(q, code) {
     font:             parseFont(q.font)                           || 'JetBrains Mono',
     fontSize:         parseNum (q.size,           14),
     lineHeight:       parseNum (q.line_height,    1.6),
+    ligatures:        parseBool(q.ligatures,        true),
+    letterSpacing:    parseNum (q.letter_spacing,   0),
+    tabSize:          parseNum (q.tab_size,          4),
     theme:            parseEnum(q.theme,          VALID_THEMES,     'one-dark'),
     bgType:           parseEnum(q.bg,             VALID_BG,         'gradient'),
     bgSolid:          parseHex (q.bg_color)                       || '#1a1b2e',
@@ -320,8 +323,9 @@ app.get('/api/info', (_req, res) => {
       // ── Typography ─────────────────────────────────────────────────────────
       font:               { type: 'string',  example: 'JetBrains_Mono',    default: 'JetBrains_Mono', description: 'Code font (underscores become spaces)' },
       size:               { type: 'number',  range: '8–72',                default: 14,               description: 'Font size in px' },
-      line_height:        { type: 'number',  range: '1.0–3.0',             default: 1.6,              description: 'Line-height multiplier' },
-      // ── Theme & colors ─────────────────────────────────────────────────────
+      line_height:        { type: 'number',  range: '1.0–3.0',             default: 1.6,              description: 'Line-height multiplier' },      ligatures:          { type: 'bool',                                   default: true,             description: 'Enable font ligatures' },
+      letter_spacing:     { type: 'number',  range: '-2–10',               default: 0,                description: 'Letter spacing in px (0 = normal)' },
+      tab_size:           { type: 'number',  range: '1–10',                default: 4,                description: 'Tab width in spaces' },      // ── Theme & colors ─────────────────────────────────────────────────────
       theme:              { type: 'string',  values: VALID_THEMES,         default: 'one-dark',       description: 'Syntax-highlight color theme' },
       // ── Background ─────────────────────────────────────────────────────────
       bg:                 { type: 'string',  values: VALID_BG,             default: 'gradient',       description: 'Background type' },
