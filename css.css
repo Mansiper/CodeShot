@@ -130,6 +130,17 @@ input[type=text]::placeholder{color:var(--text-dim)}
 .filter-btn.active{border-color:var(--accent, #7c6af7);}
 .filter-preview{width:100%;aspect-ratio:1;border-radius:4px;}
 .filter-name{font-size:8px;color:var(--fg2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
+/* ─── Custom select dropdown ─────────────────── */
+.cs-dropdown{position:relative}
+.cs-dropdown-trigger{display:flex;align-items:center;gap:7px;width:100%;padding:6px 9px 6px 8px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--text-dim);font-family:var(--ui);font-size:10.5px;transition:border-color .14s;text-align:left}
+.cs-dropdown-trigger:hover{border-color:var(--accent);color:var(--text)}
+.cs-dropdown.open>.cs-dropdown-trigger{border-color:var(--accent)}
+.cs-dropdown-panel{display:none;margin-top:5px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:8px;overflow-y:auto;max-height:270px}
+.cs-dropdown.open>.cs-dropdown-panel{display:block}
+.cs-caret{width:8px;height:5px;margin-left:auto;flex-shrink:0;opacity:.45;transition:transform .15s}
+.cs-dropdown.open .cs-caret{transform:rotate(180deg)}
+.cs-section-label{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-dim);opacity:.55;padding:3px 2px 4px;font-family:var(--ui)}
+.cs-section-label:not(:first-child){margin-top:7px}
 /* ─── Header logo ────────────────────────────── */
 .logo{display:flex;align-items:center;gap:9px}
 .logo-icon{width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}

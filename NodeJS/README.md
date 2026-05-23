@@ -100,7 +100,7 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=typescript&img_format=bas
 
 | Param | Type | Default | Values |
 |---|---|---|---|
-| `theme` | string | `one-dark` | `one-dark` `monokai` `dracula` `nord` `tokyo-night` `github-dark` `github-light` `solarized` |
+| `theme` | string | `one-dark` | **Light:** `github-light` `one-light` `solarized-light` `vs-light` `gruvbox-light` `rose-pine-dawn` `quiet-light` · **Dark:** `one-dark` `monokai` `dracula` `nord` `tokyo-night` `github-dark` `solarized` `material` `synthwave` `night-owl` `catppuccin` `ayu-dark` `gruvbox-dark` |
 
 ### Background
 

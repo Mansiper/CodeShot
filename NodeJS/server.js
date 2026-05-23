@@ -72,7 +72,11 @@ const VALID_LANGS = [
   'shell','sql','swift','toml','tsx','typescript','vbnet','vim','xml','yaml','1c',
   'plaintext',
 ];
-const VALID_THEMES   = ['one-dark','monokai','dracula','nord','tokyo-night','github-dark','github-light','solarized'];
+const VALID_THEMES   = [
+  'github-light','one-light','solarized-light','vs-light','gruvbox-light','rose-pine-dawn','quiet-light',
+  'one-dark','monokai','dracula','nord','tokyo-night','github-dark','solarized',
+  'material','synthwave','night-owl','catppuccin','ayu-dark','gruvbox-dark',
+];
 const VALID_CHROME   = ['macos','windows','gnome','none'];
 const VALID_BG       = ['gradient','solid','none'];
 const VALID_FILTERS  = [

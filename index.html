@@ -187,7 +187,16 @@
         <div id="theme-wrap">
           <div class="field">
             <div class="field-label">Theme</div>
-            <div class="theme-grid" id="theme-grid"></div>
+            <div class="cs-dropdown" id="theme-dropdown">
+              <button class="cs-dropdown-trigger" id="theme-trigger" type="button">
+                <div class="theme-swatches" id="theme-trigger-swatches" style="gap:2px"></div>
+                <div id="theme-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+                <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+              </button>
+              <div class="cs-dropdown-panel" id="theme-panel">
+                <div id="theme-grid"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -304,7 +313,16 @@
       <div class="section collapsible collapsed">
         <div class="section-title">Filters</div>
         <div class="field">
-          <div class="filter-grid" id="filter-grid"></div>
+          <div class="cs-dropdown" id="filter-dropdown">
+            <button class="cs-dropdown-trigger" id="filter-trigger" type="button">
+              <div id="filter-trigger-preview" style="width:20px;height:20px;border-radius:4px;flex-shrink:0"></div>
+              <div id="filter-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+            </button>
+            <div class="cs-dropdown-panel" id="filter-panel">
+              <div class="filter-grid" id="filter-grid"></div>
+            </div>
+          </div>
         </div>
         <div class="field" id="filter-intensity-wrap">
           <div class="field-label">Intensity <span class="field-value" id="filter-intensity-val"></span></div>
@@ -315,7 +333,16 @@
       <div class="section collapsible collapsed">
         <div class="section-title">Textures</div>
         <div class="field">
-          <div class="filter-grid" id="texture-grid"></div>
+          <div class="cs-dropdown" id="texture-dropdown">
+            <button class="cs-dropdown-trigger" id="texture-trigger" type="button">
+              <div id="texture-trigger-preview" style="width:20px;height:20px;border-radius:4px;flex-shrink:0"></div>
+              <div id="texture-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+            </button>
+            <div class="cs-dropdown-panel" id="texture-panel">
+              <div class="filter-grid" id="texture-grid"></div>
+            </div>
+          </div>
         </div>
         <div class="field" id="texture-intensity-wrap">
           <div class="field-label">Intensity <span class="field-value" id="texture-intensity-val"></span></div>
