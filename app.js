@@ -282,8 +282,8 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
   const cy = chromeH / 2;
 
   if (style === 'macos') {
-    const r = Math.max(5, Math.round(fontSize * 0.38));
-    const gap = r * 2 + 6;
+    const r = Math.max(7, Math.round(fontSize * 0.38));
+    const gap = r * 2 + 10;
     ['#ff5f57','#febc2e','#28c840'].forEach((c, i) => {
       ctx.beginPath(); ctx.arc(pad + r + i*gap, cy, r, 0, Math.PI*2);
       ctx.fillStyle = c; ctx.fill();
@@ -292,7 +292,7 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
   } else if (style === 'windows') {
     // App title
     ctx.fillStyle = dark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.55)';
-    ctx.font = `${Math.round(fontSize*0.72)}px "Segoe UI",Arial,sans-serif`;
+    ctx.font = `${Math.round(fontSize*1.2)}px "Segoe UI",Arial,sans-serif`;
     ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
     const bW2 = Math.round(chromeH * 1.55);
     const maxTitleW = totalW - bW2 * 3 - pad * 2 - 8;
@@ -304,7 +304,7 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
       const bx = totalW - bW * (3-i);
       if (b.close) { ctx.fillStyle='rgba(196,43,28,0.9)'; ctx.fillRect(bx,0,bW,chromeH); }
       ctx.fillStyle = b.close ? '#fff' : (dark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)');
-      ctx.font = `${Math.round(fontSize*0.7)}px "Segoe UI",Arial,sans-serif`;
+      ctx.font = `${Math.round(fontSize*1.2)}px "Segoe UI",Arial,sans-serif`;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(b.icon, bx + bW/2, cy + (b.icon==='−' ? 2 : 0));
     });
@@ -313,7 +313,7 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
   } else if (style === 'gnome') {
     // Title center
     ctx.fillStyle = dark ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.65)';
-    ctx.font = `${Math.round(fontSize*0.72)}px "Ubuntu","Cantarell",Arial,sans-serif`;
+    ctx.font = `${Math.round(fontSize*1.2)}px "Ubuntu","Cantarell",Arial,sans-serif`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     const r2 = Math.max(5, Math.round(fontSize * 0.38));
     const cr2 = Math.max(5, Math.round(fontSize * 0.4));
@@ -324,13 +324,13 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
     ctx.fillText(gnomeTitle, totalW/2, cy);
     ctx.textAlign = 'left';
     // Left: 2 neutral dots (minimize/maximize)
-    const r = Math.max(5, Math.round(fontSize * 0.38));
+    const r = Math.max(7, Math.round(fontSize * 0.38));
     [0,1].forEach(i => {
       ctx.beginPath(); ctx.arc(pad + r + i*(r*2+5), cy, r, 0, Math.PI*2);
       ctx.fillStyle = '#787878'; ctx.fill();
     });
     // Right: close (red circle with X)
-    const cr = Math.max(5, Math.round(fontSize * 0.4));
+    const cr = Math.max(8, Math.round(fontSize * 0.4));
     const cx2 = totalW - pad - cr;
     ctx.beginPath(); ctx.arc(cx2, cy, cr, 0, Math.PI*2);
     ctx.fillStyle = '#cc3333'; ctx.fill();
