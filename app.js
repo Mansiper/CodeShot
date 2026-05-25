@@ -2473,7 +2473,6 @@ function applyEditorTheme() {
 function colorizeEditorDOM(container, theme) {
   function walk(node, color, parentKey) {
     if (node.nodeType !== 1) return;
-    console.log(node);
     let c = color;
     let nextKey = parentKey;
     const classes = Array.from(node.classList);
