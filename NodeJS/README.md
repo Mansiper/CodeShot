@@ -213,6 +213,15 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 | `texture` | string | `none` | `none` `paper` `grain` `linen` `wood` `metal-shiny` `metal-brushed` `carbon` `scanlines` `glitter` `noise` `dots` `grid` `diagonal` `crosshatch` `hex` `concrete` `denim` `vignette` `frosted` |
 | `texture_intensity` | number | `50` | Texture opacity 0–100 % |
 
+### Text Style
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `text_style` | string | `none` | `none` `drop-shadow` `corner-glow` `outline` `glow` `recessed` `embossed` `long-shadow` `letterpress` `retro-shadow` `gradient-fill` `rainbow` `inner-glow` `double-outline` `fire` `metallic` `ice` `gold` `glitch` `neon-sign` `hollow` |
+| `text_style_color1` | hex | `89b4fa` | Primary style color (shadow, outline, glow, etc.) — no `#` |
+| `text_style_color2` | hex | `cba6f7` | Secondary style color (gradient-fill, double-outline, glitch) — no `#` |
+| `text_style_intensity` | number | `50` | Style effect intensity 0–100 % |
+
 ### Zoom & Opacity
 
 | Param | Type | Default | Description |

@@ -141,6 +141,7 @@ input[type=text]::placeholder{color:var(--text-dim)}
 .grad-preset:hover,.grad-preset.active{border-color:var(--accent);transform:scale(1.1)}
 /* ─── Image effects ────────────────────────────── */
 .filter-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+#text-style-grid{grid-template-columns:repeat(3,1fr);}
 .filter-btn{background:none;border:2px solid transparent;border-radius:6px;padding:2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:border-color .15s;}
 .filter-btn:hover{border-color:rgba(255,255,255,.25);}
 .filter-btn.active{border-color:var(--accent, #7c6af7);}

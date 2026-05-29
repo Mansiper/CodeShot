@@ -124,6 +124,30 @@ const TEXTURES = [
   { id: 'frosted',       name: 'Frosted',   preview: 'linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05))' },
 ];
 
+const TEXT_STYLES = [
+  { id: 'none',           name: 'None',           hasColor1: false, hasColor2: false, hasIntensity: false },
+  { id: 'corner-glow',    name: 'Corner Glow',    hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'double-outline', name: 'Dbl Outline',    hasColor1: true,  hasColor2: true,  hasIntensity: true  },
+  { id: 'drop-shadow',    name: 'Drop Shadow',    hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'embossed',       name: 'Embossed',       hasColor1: false, hasColor2: false, hasIntensity: true  },
+  { id: 'fire',           name: 'Fire',           hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'glitch',         name: 'Glitch',         hasColor1: true,  hasColor2: true,  hasIntensity: true  },
+  { id: 'glow',           name: 'Glow',           hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'gold',           name: 'Gold',           hasColor1: false, hasColor2: false, hasIntensity: false },
+  { id: 'gradient-fill',  name: 'Gradient Fill',  hasColor1: true,  hasColor2: true,  hasIntensity: false },
+  { id: 'hollow',         name: 'Hollow',         hasColor1: false, hasColor2: false, hasIntensity: true  },
+  { id: 'ice',            name: 'Ice',            hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'inner-glow',     name: 'Inner Glow',     hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'letterpress',    name: 'Letterpress',    hasColor1: false, hasColor2: false, hasIntensity: true  },
+  { id: 'long-shadow',    name: 'Long Shadow',    hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'metallic',       name: 'Metallic',       hasColor1: false, hasColor2: false, hasIntensity: false },
+  { id: 'neon-sign',      name: 'Neon Sign',      hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'outline',        name: 'Outline',        hasColor1: true,  hasColor2: false, hasIntensity: true  },
+  { id: 'rainbow',        name: 'Rainbow',        hasColor1: false, hasColor2: false, hasIntensity: false },
+  { id: 'recessed',       name: 'Recessed',       hasColor1: false, hasColor2: false, hasIntensity: true  },
+  { id: 'retro-shadow',   name: 'Retro Shadow',   hasColor1: true,  hasColor2: false, hasIntensity: true  },
+];
+
 const LANGUAGES = ['bash','csharp','c','cpp','css','dart','pascal','dockerfile','elixir','erlang','fsharp','go',
   'graphql','groovy','haskell','html','ini','java','javascript','json','jsx','kotlin','tex','lisp','lua',
   'makefile','markdown','matlab','nginx','objectivec','perl','php','powershell','python','r','ruby','rust','scala',
@@ -181,6 +205,10 @@ const DEFAULTS = {
   plainTextAlign: 'left',
   texture: 'none',
   textureIntensity: 50,
+  textStyle: 'none',
+  textStyleColor1: '#89b4fa',
+  textStyleColor2: '#cba6f7',
+  textStyleIntensity: 50,
   glareEnabled: false,
   glareX: 50,
   glareY: 50,
@@ -434,6 +462,284 @@ function drawChrome(ctx, totalW, chromeH, theme, fontSize, pad, style, title) {
    CODE CANVAS
 ════════════════════════════════════════════ */
 
+/**
+ * Draw a single text token using the active text style.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {string} text   Token text
+ * @param {number} x      Left edge
+ * @param {number} y      Top edge (textBaseline='top')
+ * @param {string} tokenColor  Syntax-highlight color for this token
+ * @param {number} fontSize    Active font size in px
+ * @param {number} gx     Left edge of the full text area (for gradients)
+ * @param {number} gw     Width of the full text area (for gradients)
+ */
+function drawStyledToken(ctx, text, x, y, tokenColor, fontSize, gx, gw) {
+  const style = state.textStyle;
+  if (!style || style === 'none') {
+    ctx.fillStyle = tokenColor;
+    ctx.fillText(text, x, y);
+    return;
+  }
+
+  const c1 = state.textStyleColor1;
+  const c2 = state.textStyleColor2;
+  const it = state.textStyleIntensity / 100; // 0–1
+
+  ctx.save();
+
+  switch (style) {
+
+    case 'drop-shadow': {
+      const off = 1 + it * 4;
+      ctx.shadowColor = c1;
+      ctx.shadowBlur  = it * 10;
+      ctx.shadowOffsetX = off;
+      ctx.shadowOffsetY = off;
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'corner-glow': {
+      const [r,g,b] = hexRgb(c1);
+      const off = 1 + Math.round(it * 2);
+      const alpha = 0.5 + it * 0.4;
+      [[-off,-off],[off,-off],[-off,off],[off,off]].forEach(([ox,oy]) => {
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.fillText(text, x + ox, y + oy);
+      });
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'outline': {
+      const lw = 0.5 + it * 3.5;
+      ctx.strokeStyle = c1;
+      ctx.lineWidth   = lw;
+      ctx.lineJoin    = 'round';
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'glow': {
+      const maxBlur = it * 24;
+      ctx.fillStyle = tokenColor;
+      for (const b of [maxBlur, maxBlur * 0.65, maxBlur * 0.35]) {
+        ctx.shadowColor = c1;
+        ctx.shadowBlur  = b;
+        ctx.fillText(text, x, y);
+      }
+      break;
+    }
+
+    case 'recessed': {
+      ctx.fillStyle = `rgba(0,0,0,${0.35 + it * 0.45})`;
+      ctx.fillText(text, x, y);
+      ctx.fillStyle = `rgba(255,255,255,${0.08 + it * 0.15})`;
+      ctx.fillText(text, x + 1, y + 1);
+      break;
+    }
+
+    case 'embossed': {
+      ctx.fillStyle = `rgba(255,255,255,${0.2 + it * 0.3})`;
+      ctx.fillText(text, x - 1, y - 1);
+      ctx.fillStyle = `rgba(0,0,0,${0.4 + it * 0.3})`;
+      ctx.fillText(text, x + 1, y + 1);
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'long-shadow': {
+      const steps = Math.round(4 + it * 20);
+      const [r,g,b] = hexRgb(c1);
+      for (let i = steps; i >= 1; i--) {
+        const a = (0.02 + it * 0.06) * (1 - (steps - i) / steps * 0.7);
+        ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+        ctx.fillText(text, x + i * 0.7, y + i * 0.7);
+      }
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'letterpress': {
+      ctx.fillStyle = `rgba(0,0,0,${0.3 + it * 0.4})`;
+      ctx.fillText(text, x, y - 1);
+      ctx.fillStyle = `rgba(255,255,255,${0.1 + it * 0.18})`;
+      ctx.fillText(text, x, y + 1);
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'retro-shadow': {
+      const off = Math.round(1 + it * 5);
+      ctx.fillStyle = c1;
+      ctx.fillText(text, x + off, y + off);
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'gradient-fill': {
+      const g = ctx.createLinearGradient(gx, y, gx + gw, y + fontSize);
+      g.addColorStop(0, c1);
+      g.addColorStop(1, c2);
+      ctx.fillStyle = g;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'rainbow': {
+      const g = ctx.createLinearGradient(gx, y, gx + gw, y);
+      ['#f38ba8','#fab387','#f9e2af','#a6e3a1','#89b4fa','#cba6f7'].forEach((c, i, a) =>
+        g.addColorStop(i / (a.length - 1), c));
+      ctx.fillStyle = g;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'inner-glow': {
+      const blur = 4 + it * 16;
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+      ctx.shadowColor = c1;
+      ctx.shadowBlur  = blur;
+      ctx.globalAlpha = 0.35 + it * 0.35;
+      ctx.fillStyle   = c1;
+      ctx.fillText(text, x, y);
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = 'transparent';
+      ctx.fillStyle   = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'double-outline': {
+      ctx.lineJoin    = 'round';
+      ctx.strokeStyle = c2;
+      ctx.lineWidth   = 4 + it * 3;
+      ctx.strokeText(text, x, y);
+      ctx.strokeStyle = c1;
+      ctx.lineWidth   = 1 + it * 1.5;
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle   = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'fire': {
+      const blur1 = 8 + it * 16;
+      const offY  = -(2 + it * 8);
+      ctx.fillStyle    = c1;
+      ctx.shadowColor  = c1;
+      ctx.shadowBlur   = blur1;
+      ctx.shadowOffsetY = offY;
+      ctx.fillText(text, x, y);
+      ctx.shadowBlur   = blur1 * 0.5;
+      ctx.shadowOffsetY = offY * 0.5;
+      ctx.fillText(text, x, y);
+      ctx.shadowColor  = 'transparent';
+      ctx.shadowOffsetY = 0;
+      ctx.fillStyle    = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'metallic': {
+      const g = ctx.createLinearGradient(gx, y - fontSize * 0.5, gx + gw, y + fontSize * 0.7);
+      g.addColorStop(0,    '#cdd6f4');
+      g.addColorStop(0.2,  '#ffffff');
+      g.addColorStop(0.45, '#6c7086');
+      g.addColorStop(0.6,  '#bac2de');
+      g.addColorStop(0.8,  '#ffffff');
+      g.addColorStop(1,    '#9399b2');
+      ctx.fillStyle = g;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'ice': {
+      const g = ctx.createLinearGradient(gx, y - fontSize * 0.5, gx, y + fontSize * 0.8);
+      g.addColorStop(0, '#cdd6f4');
+      g.addColorStop(1, c1);
+      ctx.shadowColor = c1;
+      ctx.shadowBlur  = 6 + it * 10;
+      ctx.fillStyle   = g;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'gold': {
+      const g = ctx.createLinearGradient(gx, y - fontSize * 0.5, gx, y + fontSize * 0.8);
+      g.addColorStop(0,    '#f9e2af');
+      g.addColorStop(0.25, '#fab387');
+      g.addColorStop(0.5,  '#eba0ac');
+      g.addColorStop(0.75, '#fab387');
+      g.addColorStop(1,    '#f9e2af');
+      ctx.fillStyle = g;
+      ctx.fillText(text, x, y);
+      ctx.shadowColor  = '#fff';
+      ctx.shadowBlur   = 2;
+      ctx.shadowOffsetY = -1;
+      ctx.globalAlpha  = 0.5;
+      ctx.fillStyle    = 'rgba(255,255,255,0.5)';
+      ctx.fillText(text, x, y);
+      ctx.globalAlpha  = 1;
+      break;
+    }
+
+    case 'glitch': {
+      const off = 1 + Math.round(it * 3);
+      ctx.globalAlpha = 0.65 + it * 0.2;
+      ctx.fillStyle = c1;
+      ctx.fillText(text, x - off, y);
+      ctx.fillStyle = c2;
+      ctx.fillText(text, x + off, y);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle   = tokenColor;
+      ctx.fillText(text, x, y);
+      break;
+    }
+
+    case 'neon-sign': {
+      const blur = 8 + it * 24;
+      ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+      ctx.lineWidth   = 3 + it * 3;
+      ctx.lineJoin    = 'round';
+      ctx.strokeText(text, x, y);
+      ctx.shadowColor = c1;
+      ctx.shadowBlur  = blur;
+      ctx.fillStyle   = tokenColor;
+      ctx.fillText(text, x, y);
+      ctx.shadowBlur  = blur * 0.4;
+      ctx.fillText(text, x, y);
+      ctx.shadowColor = 'transparent';
+      break;
+    }
+
+    case 'hollow': {
+      const lw = 0.5 + it * 2;
+      ctx.strokeStyle = tokenColor;
+      ctx.lineWidth   = lw;
+      ctx.lineJoin    = 'round';
+      ctx.strokeText(text, x, y);
+      break;
+    }
+
+    default: {
+      ctx.fillStyle = tokenColor;
+      ctx.fillText(text, x, y);
+    }
+  }
+
+  ctx.restore();
+}
+
 function applyTextSettings(ctx) {
   if ('letterSpacing' in ctx) ctx.letterSpacing = `${state.letterSpacing}px`;
 }
@@ -550,9 +856,9 @@ function renderCode() {
           const noSpaceW = ctx.measureText(words.join('')).width;
           const spaceW = (availW - noSpaceW) / (words.length - 1);
           let jx = xBase;
-          ctx.fillStyle = lineTokens[0].color;
+          const jColor = lineTokens[0].color;
           for (let wi = 0; wi < words.length; wi++) {
-            ctx.fillText(words[wi], jx, y);
+            drawStyledToken(ctx, words[wi], jx, y, jColor, fontSize, innerPadding + lineNoW, contentW - lineNoW);
             jx += ctx.measureText(words[wi]).width + (wi < words.length - 1 ? spaceW : 0);
           }
           y += lh;
@@ -562,14 +868,15 @@ function renderCode() {
       }
     }
 
+    const gx = innerPadding + lineNoW;
+    const gw = contentW - lineNoW;
     for (const t of lineTokens) {
-      ctx.fillStyle = t.color;
       if (state.ligatures) {
-        ctx.fillText(t.text, x, y);
+        drawStyledToken(ctx, t.text, x, y, t.color, fontSize, gx, gw);
         x += ctx.measureText(t.text).width;
       } else {
         for (const ch of t.text) {
-          ctx.fillText(ch, x, y);
+          drawStyledToken(ctx, ch, x, y, t.color, fontSize, gx, gw);
           x += ctx.measureText(ch).width;
         }
       }
@@ -2148,6 +2455,10 @@ function buildCurlCommand() {
   pushIfChanged('filter_intensity', state.filterIntensity, 100);
   pushIfChanged('texture', state.texture, 'none');
   pushIfChanged('texture_intensity', state.textureIntensity, 50);
+  pushIfChanged('text_style', state.textStyle, 'none');
+  pushIfChanged('text_style_color1', toHexParam(state.textStyleColor1), '89b4fa');
+  pushIfChanged('text_style_color2', toHexParam(state.textStyleColor2), 'cba6f7');
+  pushIfChanged('text_style_intensity', state.textStyleIntensity, 50);
   pushIfChanged('zoom', state.zoom, 100);
   pushIfChanged('window_opacity', state.windowOpacity, 100);
   pushIfChanged('grad_blur', state.gradBlur, false);
@@ -2281,6 +2592,17 @@ function randomizeParams() {
     state.textureIntensity = rnd(20, 70);
   } else {
     state.texture = 'none';
+  }
+
+  // Text style (20 % chance)
+  if (Math.random() < 0.2) {
+    const pick2 = arr => arr[Math.floor(Math.random() * arr.length)];
+    const tsChoices = TEXT_STYLES.filter(s => s.id !== 'none');
+    const ts = pick2(tsChoices);
+    state.textStyle          = ts.id;
+    state.textStyleIntensity = rnd(30, 80);
+  } else {
+    state.textStyle = 'none';
   }
 
   // Glare
@@ -2650,6 +2972,17 @@ function syncUI() {
     document.getElementById('texture-trigger-name').textContent = activeTex.name;
   }
 
+  // Text Style
+  document.querySelectorAll('.text-style-btn').forEach(b => b.classList.toggle('active', b.dataset.style === state.textStyle));
+  const activeTS   = TEXT_STYLES.find(s => s.id === state.textStyle) || TEXT_STYLES[0];
+  document.getElementById('text-style-trigger-name').textContent = activeTS.name;
+  document.getElementById('text-style-color1-wrap').style.display    = activeTS.hasColor1 ? '' : 'none';
+  document.getElementById('text-style-color2-wrap').style.display    = activeTS.hasColor2 ? '' : 'none';
+  document.getElementById('text-style-intensity-wrap').style.display = activeTS.hasIntensity ? '' : 'none';
+  document.getElementById('text-style-color1').value = state.textStyleColor1;
+  document.getElementById('text-style-color2').value = state.textStyleColor2;
+  setRange('text-style-intensity', state.textStyleIntensity, 'text-style-intensity-val', v => v + '%');
+
   // Screen Glare
   setSwitch('glare-switch', state.glareEnabled);
   document.getElementById('glare-controls').style.opacity = state.glareEnabled ? '1' : '0.35';
@@ -2968,6 +3301,16 @@ function bindEvents() {
   });
   bindR('texture-intensity', 'textureIntensity', 'texture-intensity-val', v => v + '%');
 
+  // Text Style
+  document.getElementById('text-style-grid').addEventListener('click', e => {
+    const b = e.target.closest('.text-style-btn'); if (!b) return;
+    change('textStyle', b.dataset.style); syncUI();
+    document.getElementById('text-style-dropdown').classList.remove('open');
+  });
+  document.getElementById('text-style-color1').addEventListener('input', e => change('textStyleColor1', e.target.value));
+  document.getElementById('text-style-color2').addEventListener('input', e => change('textStyleColor2', e.target.value));
+  bindR('text-style-intensity', 'textStyleIntensity', 'text-style-intensity-val', v => v + '%');
+
   // Screen Glare
   document.getElementById('glare-switch').addEventListener('click', () => {
     change('glareEnabled', !state.glareEnabled);
@@ -3111,8 +3454,8 @@ function bindEvents() {
     document.querySelectorAll('.cs-dropdown.open').forEach(d => d.classList.remove('open'));
   });
 
-  // Custom dropdown triggers (theme, filter, texture)
-  ['theme', 'filter', 'texture'].forEach(id => {
+  // Custom dropdown triggers (theme, filter, texture, text-style)
+  ['theme', 'filter', 'texture', 'text-style'].forEach(id => {
     const dropdown = document.getElementById(`${id}-dropdown`);
     const trigger  = document.getElementById(`${id}-trigger`);
     trigger.addEventListener('click', e => {
@@ -3134,10 +3477,14 @@ function bindEvents() {
         const ids = FILTERS.map(f => f.id);
         const next = ids[(ids.indexOf(state.filter) + delta + ids.length) % ids.length];
         change('filter', next); syncUI();
-      } else {
+      } else if (id === 'texture') {
         const ids = TEXTURES.map(t => t.id);
         const next = ids[(ids.indexOf(state.texture) + delta + ids.length) % ids.length];
         change('texture', next); syncUI();
+      } else {
+        const ids = TEXT_STYLES.map(s => s.id);
+        const next = ids[(ids.indexOf(state.textStyle) + delta + ids.length) % ids.length];
+        change('textStyle', next); syncUI();
       }
     });
     // Prevent clicks inside the panel from closing the dropdown
@@ -3253,6 +3600,15 @@ function buildUI() {
     b.innerHTML = `<div class="filter-preview" style="background:${t.preview}"></div>
       <div class="filter-name">${t.name}</div>`;
     txg.appendChild(b);
+  }
+
+  // Text Styles
+  const tsg = document.getElementById('text-style-grid');
+  for (const s of TEXT_STYLES) {
+    const b = document.createElement('button');
+    b.className = 'filter-btn text-style-btn'; b.dataset.style = s.id;
+    b.innerHTML = `<div class="filter-name" style="padding:4px 0;font-size:10.5px">${s.name}</div>`;
+    tsg.appendChild(b);
   }
 
   // Plain text fonts

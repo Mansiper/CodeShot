@@ -88,6 +88,12 @@ const VALID_TEXTURES = [
   'scanlines','glitter','noise','dots','grid','diagonal','crosshatch','hex',
   'concrete','denim','vignette','frosted',
 ];
+const VALID_TEXT_STYLES = [
+  'none','drop-shadow','corner-glow','outline','glow','recessed','embossed',
+  'long-shadow','letterpress','retro-shadow','gradient-fill','rainbow',
+  'inner-glow','double-outline','fire','metallic','ice','gold','glitch',
+  'neon-sign','hollow',
+];
 const VALID_FORMATS  = ['png','jpg','webp','gif','tiff','base64'];
 const VALID_SCALES   = [1, 2, 3, 4];
 const VALID_ASPECTS  = ['custom','16:9','3:2','4:3','5:4','1:1','4:5','3:4','2:3','9:16'];
@@ -136,6 +142,10 @@ function buildState(q, code) {
     filterIntensity:  parseNum (q.filter_intensity, 100),
     texture:          parseEnum(q.texture,        VALID_TEXTURES,   'none'),
     textureIntensity: parseNum (q.texture_intensity, 50),
+    textStyle:        parseEnum(q.text_style,       VALID_TEXT_STYLES, 'none'),
+    textStyleColor1:  parseHex (q.text_style_color1)                || '#89b4fa',
+    textStyleColor2:  parseHex (q.text_style_color2)                || '#cba6f7',
+    textStyleIntensity: parseNum(q.text_style_intensity, 50),
     zoom:             parseNum (q.zoom,           100),
     windowOpacity:    parseNum (q.window_opacity, 100),
     gradBlur:         parseBool(q.grad_blur,      false),
@@ -486,6 +496,11 @@ app.get('/api/info', (_req, res) => {
       // ── Textures ───────────────────────────────────────────────────────────
       texture:            { type: 'string',  values: VALID_TEXTURES,       default: 'none',           description: 'Texture overlay drawn on top of the background' },
       texture_intensity:  { type: 'number',  range: '0–100',               default: 50,               description: 'Texture opacity %' },
+      // ── Text style ─────────────────────────────────────────────────────────
+      text_style:         { type: 'string',  values: VALID_TEXT_STYLES,    default: 'none',           description: 'Text rendering style applied to every character drawn on the canvas' },
+      text_style_color1:  { type: 'hex',     example: '89b4fa',            default: '89b4fa',         description: 'Primary style color (shadow, outline, glow, etc.) — no #' },
+      text_style_color2:  { type: 'hex',     example: 'cba6f7',            default: 'cba6f7',         description: 'Secondary style color (used by gradient-fill, double-outline, glitch) — no #' },
+      text_style_intensity: { type: 'number', range: '0–100',              default: 50,               description: 'Style effect intensity %' },
       // ── Zoom & opacity ─────────────────────────────────────────────────────
       zoom:               { type: 'number',  range: '10–300',              default: 100,              description: 'Code-block zoom % (background stays the same size)' },
       window_opacity:     { type: 'number',  range: '0–100',               default: 100,              description: 'Window opacity %' },

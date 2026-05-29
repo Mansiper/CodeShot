@@ -381,6 +381,33 @@
       </div>
 
       <div class="section collapsible collapsed">
+        <div class="section-title">Text Style</div>
+        <div class="field">
+          <div class="cs-dropdown" id="text-style-dropdown">
+            <button class="cs-dropdown-trigger" id="text-style-trigger" type="button">
+              <div id="text-style-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+            </button>
+            <div class="cs-dropdown-panel" id="text-style-panel">
+              <div class="filter-grid" id="text-style-grid"></div>
+            </div>
+          </div>
+        </div>
+        <div id="text-style-color1-wrap" class="color-row">
+          <span class="color-label">Color</span>
+          <input type="color" id="text-style-color1">
+        </div>
+        <div id="text-style-color2-wrap" class="color-row">
+          <span class="color-label">Color 2</span>
+          <input type="color" id="text-style-color2">
+        </div>
+        <div class="field" id="text-style-intensity-wrap">
+          <div class="field-label">Intensity <span class="field-value" id="text-style-intensity-val"></span></div>
+          <input type="range" id="text-style-intensity" min="0" max="100" step="1">
+        </div>
+      </div>
+
+      <div class="section collapsible collapsed">
         <div class="section-title">Screen Glare</div>
         <div class="field">
           <label class="switch" id="glare-switch">
