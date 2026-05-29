@@ -338,6 +338,28 @@
             <input type="range" id="window-opacity" min="10" max="100" step="5">
           </div>
         </div>
+        <div class="field" style="margin-top:10px">
+          <div class="field-label">Border</div>
+          <div class="cs-dropdown" id="border-style-dropdown">
+            <button class="cs-dropdown-trigger" id="border-style-trigger" type="button">
+              <div id="border-style-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
+            </button>
+            <div class="cs-dropdown-panel" id="border-style-panel">
+              <div class="filter-grid" id="border-style-grid"></div>
+            </div>
+          </div>
+        </div>
+        <div id="border-sub" style="display:none;margin-top:8px">
+          <div class="field">
+            <div class="field-label">Border Width <span class="field-value" id="border-width-val"></span></div>
+            <input type="range" id="border-width" min="1" max="20" step="1">
+          </div>
+          <div class="color-row">
+            <span class="color-label">Border Color</span>
+            <input type="color" id="border-color">
+          </div>
+        </div>
       </div>
 
       <div class="section collapsible collapsed">

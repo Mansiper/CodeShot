@@ -224,6 +224,9 @@ const DEFAULTS = {
   tabSize: 4,
   scaleMultiplier: 1,
   aspectRatio: 'custom',
+  borderStyle: 'none',
+  borderWidth: 2,
+  borderColor: '#ffffff',
 };
 
 let state = { ...DEFAULTS };
@@ -751,6 +754,365 @@ function measureW(ctx, text) {
   return w;
 }
 
+/* ════════════════════════════════════════════
+   BORDER DRAWING
+════════════════════════════════════════════ */
+
+const BORDER_STYLES = [
+  { id: 'none',    name: 'None'    },
+  { id: 'solid',   name: 'Solid'   },
+  { id: 'dashed',  name: 'Dashed'  },
+  { id: 'dotted',  name: 'Dotted'  },
+  { id: 'double',  name: 'Double'  },
+  { id: 'groove',  name: 'Groove'  },
+  { id: 'ridge',   name: 'Ridge'   },
+  { id: 'inset',   name: 'Inset'   },
+  { id: 'outset',  name: 'Outset'  },
+  { id: 'quote',   name: 'Quote'   },
+  { id: 'corners', name: 'Corners' },
+  { id: 'neon',    name: 'Neon'    },
+  { id: 'rainbow', name: 'Rainbow' },
+  { id: 'wavy',    name: 'Wavy'    },
+];
+
+function drawBorder(ctx, totalW, totalH, cornerRadius) {
+  const style = state.borderStyle;
+  if (!style || style === 'none') return;
+
+  const bw = Math.max(1, state.borderWidth);
+  const color = state.borderColor || '#ffffff';
+
+  // Helper: build a rounded-rect path inset by `inset` px
+  function borderPath(inset, r) {
+    const x = inset, y = inset, w = totalW - inset * 2, h = totalH - inset * 2;
+    const cr = Math.max(0, r - inset);
+    ctx.beginPath();
+    ctx.moveTo(x + cr, y);
+    ctx.lineTo(x + w - cr, y);   ctx.quadraticCurveTo(x + w, y, x + w, y + cr);
+    ctx.lineTo(x + w, y + h - cr); ctx.quadraticCurveTo(x + w, y + h, x + w - cr, y + h);
+    ctx.lineTo(x + cr, y + h);   ctx.quadraticCurveTo(x, y + h, x, y + h - cr);
+    ctx.lineTo(x, y + cr);       ctx.quadraticCurveTo(x, y, x + cr, y);
+    ctx.closePath();
+  }
+
+  // Helper: darker/lighter variant of a hex color for groove/ridge/inset/outset
+  function shade(hex, amt) {
+    const [r, g, b] = hexRgb(hex);
+    return rgbHex(r + amt, g + amt, b + amt);
+  }
+
+  ctx.save();
+  ctx.lineCap  = 'round';
+  ctx.lineJoin = 'round';
+
+  switch (style) {
+
+    case 'solid': {
+      borderPath(bw / 2, cornerRadius);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+      ctx.stroke();
+      break;
+    }
+
+    case 'dashed': {
+      const dash = Math.max(4, bw * 3);
+      borderPath(bw / 2, cornerRadius);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+      ctx.setLineDash([dash, dash]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      break;
+    }
+
+    case 'dotted': {
+      borderPath(bw / 2, cornerRadius);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+      ctx.setLineDash([bw, bw * 1.5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      break;
+    }
+
+    case 'double': {
+      const gap = Math.max(2, Math.round(bw / 3));
+      const outer = bw;
+      [gap / 2, outer + gap / 2 + gap].forEach(inset => {
+        borderPath(inset, cornerRadius);
+        ctx.strokeStyle = color;
+        ctx.lineWidth   = Math.max(1, Math.round(bw / 3));
+        ctx.stroke();
+      });
+      break;
+    }
+
+    case 'groove': {
+      const half = Math.max(1, Math.round(bw / 2));
+      borderPath(half / 2, cornerRadius);
+      ctx.strokeStyle = shade(color, -50);
+      ctx.lineWidth   = half;
+      ctx.stroke();
+      borderPath(half + half / 2, cornerRadius);
+      ctx.strokeStyle = shade(color, 40);
+      ctx.lineWidth   = half;
+      ctx.stroke();
+      break;
+    }
+
+    case 'ridge': {
+      const half = Math.max(1, Math.round(bw / 2));
+      borderPath(half / 2, cornerRadius);
+      ctx.strokeStyle = shade(color, 40);
+      ctx.lineWidth   = half;
+      ctx.stroke();
+      borderPath(half + half / 2, cornerRadius);
+      ctx.strokeStyle = shade(color, -50);
+      ctx.lineWidth   = half;
+      ctx.stroke();
+      break;
+    }
+
+    case 'inset': {
+      const half = Math.max(1, Math.round(bw / 2));
+      borderPath(half / 2, cornerRadius);
+      ctx.strokeStyle = shade(color, -55);
+      ctx.lineWidth   = bw;
+      ctx.stroke();
+      borderPath(half * 1.5, cornerRadius);
+      ctx.strokeStyle = shade(color, 45);
+      ctx.lineWidth   = half;
+      ctx.stroke();
+      break;
+    }
+
+    case 'outset': {
+      const half = Math.max(1, Math.round(bw / 2));
+      borderPath(half / 2, cornerRadius);
+      ctx.strokeStyle = shade(color, 45);
+      ctx.lineWidth   = bw;
+      ctx.stroke();
+      borderPath(half * 1.5, cornerRadius);
+      ctx.strokeStyle = shade(color, -55);
+      ctx.lineWidth   = half;
+      ctx.stroke();
+      break;
+    }
+
+    case 'quote': {
+      // Large double-quote marks in both gaps
+      const quoteFontSize = Math.max(24, bw * 6);
+      ctx.font = `bold ${quoteFontSize}px serif`;
+      const openMark  = '\u201C'; // ""
+      const closeMark = '\u201D'; // ""
+      const markW  = ctx.measureText(openMark).width;
+      const gapW   = markW + bw * 6;
+      const halfGap = gapW / 2;
+      const centerX = totalW / 2;
+      const inset   = bw / 2;
+      const r       = Math.max(0, cornerRadius - inset);
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+
+      // Top-left segment
+      ctx.beginPath();
+      ctx.moveTo(inset + r, inset);
+      ctx.lineTo(centerX - halfGap, inset);
+      ctx.stroke();
+
+      // Top-right + right + bottom-right + bottom-right segment + bottom-left arc
+      ctx.beginPath();
+      ctx.moveTo(centerX + halfGap, inset);
+      ctx.lineTo(totalW - inset - r, inset);
+      ctx.quadraticCurveTo(totalW - inset, inset, totalW - inset, inset + r);
+      ctx.lineTo(totalW - inset, totalH - inset - r);
+      ctx.quadraticCurveTo(totalW - inset, totalH - inset, totalW - inset - r, totalH - inset);
+      ctx.lineTo(centerX + halfGap, totalH - inset);
+      ctx.stroke();
+
+      // Bottom-left segment + left side + top-left arc
+      ctx.beginPath();
+      ctx.moveTo(centerX - halfGap, totalH - inset);
+      ctx.lineTo(inset + r, totalH - inset);
+      ctx.quadraticCurveTo(inset, totalH - inset, inset, totalH - inset - r);
+      ctx.lineTo(inset, inset + r);
+      ctx.quadraticCurveTo(inset, inset, inset + r, inset);
+      ctx.stroke();
+
+      // Quote marks in the gaps — centered on their respective border lines
+      ctx.fillStyle    = color;
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(openMark,  centerX, quoteFontSize / 2.22); // on the top border
+      ctx.fillText(closeMark, centerX, totalH + inset);  // on the bottom border
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'alphabetic';
+      break;
+    }
+
+    case 'corners': {
+      // L-shaped corner brackets; corner arm length ≈ 18% of shortest side
+      const arm    = Math.max(16, Math.min(totalW, totalH) * 0.18);
+      const inset  = bw / 2;
+      const r      = Math.max(0, cornerRadius - inset);
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+
+      function cornerBracket(fromX, fromY, midX, midY, toX, toY) {
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        if (r > 0) {
+          // Arc in the corner
+          ctx.lineTo(midX + (fromX < midX ? r : -r) * Math.sign(fromX - midX), fromY);
+          ctx.quadraticCurveTo(midX, fromY, midX, fromY + (toY > fromY ? r : -r) * Math.sign(toY - fromY));
+        } else {
+          ctx.lineTo(midX, midY);
+        }
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+      }
+
+      // Top-left: from (inset, inset+arm) → corner → (inset+arm, inset)
+      ctx.beginPath();
+      ctx.moveTo(inset, inset + arm);
+      if (r > 0) {
+        ctx.lineTo(inset, inset + r);
+        ctx.quadraticCurveTo(inset, inset, inset + r, inset);
+      } else {
+        ctx.lineTo(inset, inset);
+        ctx.lineTo(inset + r, inset);
+      }
+      ctx.lineTo(inset + arm, inset);
+      ctx.stroke();
+
+      // Top-right
+      ctx.beginPath();
+      ctx.moveTo(totalW - inset - arm, inset);
+      if (r > 0) {
+        ctx.lineTo(totalW - inset - r, inset);
+        ctx.quadraticCurveTo(totalW - inset, inset, totalW - inset, inset + r);
+      } else {
+        ctx.lineTo(totalW - inset, inset);
+        ctx.lineTo(totalW - inset, inset + r);
+      }
+      ctx.lineTo(totalW - inset, inset + arm);
+      ctx.stroke();
+
+      // Bottom-right
+      ctx.beginPath();
+      ctx.moveTo(totalW - inset, totalH - inset - arm);
+      if (r > 0) {
+        ctx.lineTo(totalW - inset, totalH - inset - r);
+        ctx.quadraticCurveTo(totalW - inset, totalH - inset, totalW - inset - r, totalH - inset);
+      } else {
+        ctx.lineTo(totalW - inset, totalH - inset);
+        ctx.lineTo(totalW - inset - r, totalH - inset);
+      }
+      ctx.lineTo(totalW - inset - arm, totalH - inset);
+      ctx.stroke();
+
+      // Bottom-left
+      ctx.beginPath();
+      ctx.moveTo(inset + arm, totalH - inset);
+      if (r > 0) {
+        ctx.lineTo(inset + r, totalH - inset);
+        ctx.quadraticCurveTo(inset, totalH - inset, inset, totalH - inset - r);
+      } else {
+        ctx.lineTo(inset, totalH - inset);
+        ctx.lineTo(inset, totalH - inset - r);
+      }
+      ctx.lineTo(inset, totalH - inset - arm);
+      ctx.stroke();
+      break;
+    }
+
+    case 'neon': {
+      // Multi-layer glow: wide+dim outer → narrow+bright core
+      const layers = [
+        { blur: bw * 10, alpha: 0.20, lw: bw * 2.5 },
+        { blur: bw * 5,  alpha: 0.40, lw: bw * 1.5 },
+        { blur: bw * 2,  alpha: 0.70, lw: bw        },
+        { blur: bw * 0.5,alpha: 1.00, lw: bw * 0.35, white: true },
+      ];
+      for (const l of layers) {
+        ctx.save();
+        ctx.shadowColor = color;
+        ctx.shadowBlur  = l.blur;
+        ctx.strokeStyle = l.white ? '#ffffff' : color;
+        ctx.lineWidth   = l.lw;
+        ctx.globalAlpha = l.alpha;
+        borderPath(bw / 2, cornerRadius);
+        ctx.stroke();
+        ctx.restore();
+      }
+      break;
+    }
+
+    case 'rainbow': {
+      // Diagonal rainbow gradient across the full border path
+      const g = ctx.createLinearGradient(0, 0, totalW, totalH);
+      g.addColorStop(0,    '#ff0080');
+      g.addColorStop(0.17, '#ff8000');
+      g.addColorStop(0.33, '#ffff00');
+      g.addColorStop(0.50, '#00ff80');
+      g.addColorStop(0.67, '#00cfff');
+      g.addColorStop(0.83, '#4080ff');
+      g.addColorStop(1,    '#bf00ff');
+      borderPath(bw / 2, cornerRadius);
+      ctx.strokeStyle = g;
+      ctx.lineWidth   = bw;
+      ctx.stroke();
+      break;
+    }
+
+    case 'wavy': {
+      // Sinusoidal wave on each edge
+      const amp    = Math.max(3, bw * 2.5);
+      const period = Math.max(24, bw * 10);
+      const inset  = bw;
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+      ctx.lineCap     = 'round';
+
+      function wavySeg(x0, y0, x1, y1) {
+        const dx  = x1 - x0, dy = y1 - y0;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const nx  = -dy / len, ny = dx / len;
+        const steps = Math.max(4, Math.ceil(len / 4));
+        ctx.beginPath();
+        for (let i = 0; i <= steps; i++) {
+          const t    = i / steps;
+          const wave = Math.sin(t * len / period * Math.PI * 2) * amp;
+          const x    = x0 + dx * t + nx * wave;
+          const y    = y0 + dy * t + ny * wave;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      // 4 sides
+      wavySeg(inset, inset,             totalW - inset, inset);
+      wavySeg(totalW - inset, inset,    totalW - inset, totalH - inset);
+      wavySeg(totalW - inset, totalH - inset, inset,    totalH - inset);
+      wavySeg(inset, totalH - inset,    inset,          inset);
+      break;
+    }
+
+    default: {
+      borderPath(bw / 2, cornerRadius);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = bw;
+      ctx.stroke();
+    }
+  }
+
+  ctx.restore();
+}
+
 function renderCode() {
   if (state.inputMode === 'markdown') return renderMarkdown();
 
@@ -883,7 +1245,10 @@ function renderCode() {
     }
     y += lh;
   }
-  
+
+  // Draw border on top of code block content
+  drawBorder(ctx, totalW, totalH, cornerRadius);
+
   return off;
 }
 
@@ -2055,6 +2420,9 @@ function renderMarkdown() {
     }
   }
 
+  // Draw border on top of markdown block content
+  drawBorder(ctx, off.width, off.height, cornerRadius);
+
   return off;
 }
 
@@ -2485,6 +2853,9 @@ function buildCurlCommand() {
   pushIfChanged('ligatures', state.ligatures, true);
   pushIfChanged('letter_spacing', state.letterSpacing, 0);
   pushIfChanged('tab_size', state.tabSize, 4);
+  pushIfChanged('border_style', state.borderStyle, 'none');
+  pushIfChanged('border_width', state.borderWidth, 2);
+  pushIfChanged('border_color', toHexParam(state.borderColor), 'ffffff');
 
   const query = params
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
@@ -2932,6 +3303,16 @@ function syncUI() {
   setRange('window-offset-x', state.windowOffsetX, 'window-offset-x-val', v => v + '%');
   setRange('window-offset-y', state.windowOffsetY, 'window-offset-y-val', v => v + '%');
 
+  // Border
+  document.getElementById('border-style-trigger-name').textContent =
+    (BORDER_STYLES.find(s => s.id === state.borderStyle) || BORDER_STYLES[0]).name;
+  document.querySelectorAll('.border-style-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.borderStyle === state.borderStyle));
+  const hasBorder = state.borderStyle !== 'none';
+  document.getElementById('border-sub').style.display = hasBorder ? '' : 'none';
+  setRange('border-width', state.borderWidth, 'border-width-val', v => v + 'px');
+  document.getElementById('border-color').value = state.borderColor;
+
   // 3D
   setRange('tilt-angle', state.tiltAngle, 'tilt-val', v=>v+'°');
   setRange('depth-angle', state.depthAngle, 'depth-val', v=>v+'°');
@@ -2951,7 +3332,7 @@ function syncUI() {
   setRange('gblur-start',  state.gradBlurStart,  'gblur-start-val',  v=>v+'%');
 
   // Filters
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === state.filter));
+  document.querySelectorAll('#filter-grid .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === state.filter));
   setRange('filter-intensity', state.filterIntensity, 'filter-intensity-val', v => v + '%');
   document.getElementById('filter-intensity-wrap').style.opacity = state.filter === 'none' ? '0.35' : '1';
   // Update filter trigger button
@@ -3349,6 +3730,19 @@ function bindEvents() {
   bindSwitch('shadow-switch','showShadow');
   bindSwitch('gblur-switch','gradBlur');
   bindSwitch('ligatures-switch','ligatures');
+
+  // Border
+  document.getElementById('border-style-grid').addEventListener('click', e => {
+    const b = e.target.closest('.border-style-btn'); if (!b) return;
+    change('borderStyle', b.dataset.borderStyle); syncUI();
+    document.getElementById('border-style-dropdown').classList.remove('open');
+  });
+  document.getElementById('border-width').addEventListener('input', e => {
+    const v = parseInt(e.target.value);
+    document.getElementById('border-width-val').textContent = v + 'px';
+    change('borderWidth', v);
+  });
+  document.getElementById('border-color').addEventListener('input', e => change('borderColor', e.target.value));
   document.getElementById('watermark-switch').addEventListener('click', () => {
     showWatermark = !showWatermark;
     setSwitch('watermark-switch', showWatermark);
@@ -3454,8 +3848,8 @@ function bindEvents() {
     document.querySelectorAll('.cs-dropdown.open').forEach(d => d.classList.remove('open'));
   });
 
-  // Custom dropdown triggers (theme, filter, texture, text-style)
-  ['theme', 'filter', 'texture', 'text-style'].forEach(id => {
+  // Custom dropdown triggers (theme, filter, texture, text-style, border-style)
+  ['theme', 'filter', 'texture', 'text-style', 'border-style'].forEach(id => {
     const dropdown = document.getElementById(`${id}-dropdown`);
     const trigger  = document.getElementById(`${id}-trigger`);
     trigger.addEventListener('click', e => {
@@ -3481,6 +3875,10 @@ function bindEvents() {
         const ids = TEXTURES.map(t => t.id);
         const next = ids[(ids.indexOf(state.texture) + delta + ids.length) % ids.length];
         change('texture', next); syncUI();
+      } else if (id === 'border-style') {
+        const ids = BORDER_STYLES.map(s => s.id);
+        const next = ids[(ids.indexOf(state.borderStyle) + delta + ids.length) % ids.length];
+        change('borderStyle', next); syncUI();
       } else {
         const ids = TEXT_STYLES.map(s => s.id);
         const next = ids[(ids.indexOf(state.textStyle) + delta + ids.length) % ids.length];
@@ -3609,6 +4007,15 @@ function buildUI() {
     b.className = 'filter-btn text-style-btn'; b.dataset.style = s.id;
     b.innerHTML = `<div class="filter-name" style="padding:4px 0;font-size:10.5px">${s.name}</div>`;
     tsg.appendChild(b);
+  }
+
+  // Border Styles
+  const bsg = document.getElementById('border-style-grid');
+  for (const s of BORDER_STYLES) {
+    const b = document.createElement('button');
+    b.className = 'filter-btn border-style-btn'; b.dataset.borderStyle = s.id;
+    b.innerHTML = `<div class="filter-name" style="padding:4px 0;font-size:10.5px">${s.name}</div>`;
+    bsg.appendChild(b);
   }
 
   // Plain text fonts

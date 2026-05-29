@@ -94,6 +94,10 @@ const VALID_TEXT_STYLES = [
   'inner-glow','double-outline','fire','metallic','ice','gold','glitch',
   'neon-sign','hollow',
 ];
+const VALID_BORDER_STYLES = [
+  'none','solid','dashed','dotted','double','groove','ridge','inset','outset',
+  'quote','corners','neon','rainbow','wavy',
+];
 const VALID_FORMATS  = ['png','jpg','webp','gif','tiff','base64'];
 const VALID_SCALES   = [1, 2, 3, 4];
 const VALID_ASPECTS  = ['custom','16:9','3:2','4:3','5:4','1:1','4:5','3:4','2:3','9:16'];
@@ -176,6 +180,10 @@ function buildState(q, code) {
     // keep selection clear; not applicable in API context
     selectionColor:   '#6490ff',
     selectionOpacity: 0,
+    // Border
+    borderStyle:      parseEnum(q.border_style, VALID_BORDER_STYLES, 'none'),
+    borderWidth:      parseNum (q.border_width,  2),
+    borderColor:      parseHex (q.border_color)                    || '#ffffff',
   };
 }
 

@@ -34,8 +34,8 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Trapezoid distortion** — warp the frame edges independently
 - **Lens effect** — convex (+) barrel or concave (−) pincushion distortion that physically curves the window shape
 - **Gradient blur** — directional blur fade from any edge
-- **Filters** — B&W, Sepia, Cool, Warm, Faded, Vivid, Cinematic, Noir, Amber
-- **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter
+- **Filters** — B&W, Sepia, Cool, Warm, Faded, Vivid, Cinematic, Noir, Amber, and more (20 filters)
+- **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter, and more (20 textures)
 - **Text styles** - Drop Shadow, Glow, Outline, Gradient Fill, Rainbow, Neon Sign, Fire, Metallic, Ice, Gold, and more (20 effects)
 - **Screen glare** — simulated light source with configurable X/Y position (can exceed canvas bounds by 50%), distance from screen (controls spread), horizontal/vertical angle (physically-based ellipse elongation — 0°/0° = circle, angled = elongated in the direction of incidence), blur, intensity, and color
 - **Drop shadow** with adjustable blur
@@ -45,6 +45,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Export scale** — 1×, 2×, 3×, 4× output multiplier for high-DPI images
 - **Aspect ratio** — lock the output canvas to 16:9, 4:3, 1:1, 9:16, and more; background is padded to fit
 - **Window opacity**
+- **Window border** — 13 styles: solid, dashed, dotted, double, groove, ridge, inset, outset, quote (double curly-quotes in top/bottom gaps), corners (L-shaped corner brackets), neon (multi-layer glow), rainbow (diagonal gradient), wavy (sinusoidal wave) — with configurable width and color
 - **Copy to clipboard** or **Export** to one of 6 formats (PNG, JPG, WebP, GIF, TIFF, Base64) — JPG export prompts a quality slider (1–100 %, default 92 %)
 - **Settings auto-saved** to `localStorage` — your config persists across sessions
 - **Settings presets** — save current settings under a name, load or delete saved presets

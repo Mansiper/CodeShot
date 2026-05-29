@@ -222,6 +222,14 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 | `text_style_color2` | hex | `cba6f7` | Secondary style color (gradient-fill, double-outline, glitch) — no `#` |
 | `text_style_intensity` | number | `50` | Style effect intensity 0–100 % |
 
+### Border
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `border_style` | string | `none` | `none` `solid` `dashed` `dotted` `double` `groove` `ridge` `inset` `outset` `quote` `corners` `neon` `rainbow` `wavy` |
+| `border_width` | number | `2` | Border width in px (1–20) |
+| `border_color` | hex | `ffffff` | Border color (no `#`) |
+
 ### Zoom & Opacity
 
 | Param | Type | Default | Description |
