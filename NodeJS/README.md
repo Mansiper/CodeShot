@@ -9,7 +9,7 @@ An HTTP API that renders [CodeShot](https://github.com/Mansiper/CodeShot) screen
 ## Requirements
 
 - Node.js ≥ 18
-- The web assets (`index.html`, `app.js`, `css.css`) must be present in the **parent directory** (the repo root). The server serves them automatically.
+- The web assets (`index.html`, `scripts`, `css.css`) must be present in the **parent directory** (the repo root). The server serves them automatically.
 
 ---
 
