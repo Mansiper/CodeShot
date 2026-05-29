@@ -14,6 +14,7 @@ CodeShot is a browser-first code screenshot generator with many visual controls 
 5. Keep backward compatibility in scripts/storage.js when renaming or replacing persisted keys.
 6. Keep script load order stable in index.html unless a dependency requires a reorder.
 7. Avoid silent partial support: if a property is user-visible, ensure UI, rendering, export, API, and docs are all updated.
+8. All styles must be placed in css.css. index.html must not contain any inline styles.
 
 ## Mandatory files for any parameter/property change
 When changing any visual parameter, API parameter, or saved property, always review and update these files:

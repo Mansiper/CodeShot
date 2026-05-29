@@ -94,18 +94,16 @@
 
       <div class="section">
         <div class="section-title">Presets</div>
-        <div id="presets-list" style="margin-bottom:8px"></div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="text" id="preset-name-input" placeholder="Preset name…" maxlength="40"
-            style="flex:1;box-sizing:border-box">
-          <button class="btn btn-primary" id="save-preset-btn"
-            style="padding:4px 10px;font-size:11px;flex-shrink:0">Save</button>
+        <div id="presets-list"></div>
+        <div id="preset-name-row">
+          <input type="text" id="preset-name-input" placeholder="Preset name…" maxlength="40">
+          <button class="btn btn-primary" id="save-preset-btn">Save</button>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">Parameters
-          <button class="btn" id="reset-params-btn" style="padding:3px 9px;font-size:10px">Reset</button>
+        <div class="section-title" id="params-title">Parameters
+          <button class="btn" id="reset-params-btn">Reset</button>
         </div>
         <div class="field">
           <div class="field-label">Mode</div>
@@ -147,7 +145,7 @@
             </select>
           </div>
         </div>
-        <div id="plain-font-wrap" style="display:none">
+        <div id="plain-font-wrap">
           <div class="field">
             <div class="field-label">Font</div>
             <select id="plain-font-select"></select>
@@ -179,7 +177,7 @@
             <input type="range" id="tab-size" min="1" max="10" step="1">
           </div>
         </div>
-        <div id="text-color-wrap" style="display:none">
+        <div id="text-color-wrap">
           <div class="color-row">
             <span class="color-label">Text Color</span>
             <input type="color" id="plain-text-color">
@@ -188,7 +186,7 @@
             <span class="color-label">Background</span>
             <input type="color" id="plain-text-bg">
           </div>
-          <div class="field" id="plain-align-wrap" style="margin-top:8px">
+          <div class="field" id="plain-align-wrap">
             <div class="field-label">Text Align</div>
             <div class="toggle-group" id="plain-align-group">
               <button class="toggle-btn" data-val="left">Left</button>
@@ -198,7 +196,7 @@
             </div>
           </div>
         </div>
-        <div id="md-settings-wrap" style="display:none">
+        <div id="md-settings-wrap">
           <div class="color-row">
             <span class="color-label">Heading Color</span>
             <input type="color" id="md-heading-color">
@@ -211,22 +209,22 @@
         <div id="theme-wrap">
           <div class="field">
             <div class="field-label">Theme</div>
-            <div style="display:flex;gap:5px;align-items:flex-start">
-              <div class="cs-dropdown" id="theme-dropdown" style="flex:1;min-width:0">
+            <div id="theme-picker-row">
+              <div class="cs-dropdown" id="theme-dropdown">
                 <button class="cs-dropdown-trigger" id="theme-trigger" type="button">
-                  <div class="theme-swatches" id="theme-trigger-swatches" style="gap:2px"></div>
-                  <div id="theme-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+                  <div class="theme-swatches" id="theme-trigger-swatches"></div>
+                  <div id="theme-trigger-name"></div>
                   <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
                 </button>
                 <div class="cs-dropdown-panel" id="theme-panel">
                   <div id="theme-grid"></div>
                 </div>
               </div>
-              <button class="btn" id="theme-edit-btn" style="flex-shrink:0;padding:6px 9px" title="Edit theme colors">
+              <button class="btn" id="theme-edit-btn" title="Edit theme colors">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </button>
             </div>
-            <div id="theme-editor" style="display:none;margin-top:8px"></div>
+            <div id="theme-editor"></div>
           </div>
         </div>
       </div>
@@ -305,23 +303,23 @@
           <div class="field-label">Window Style</div>
           <div class="chrome-grid" id="chrome-grid"></div>
         </div>
-        <div class="field" id="window-title-wrap" style="display:none">
+        <div class="field" id="window-title-wrap">
           <div class="field-label">Window Title</div>
-          <input type="text" id="window-title" placeholder="e.g. code.js" maxlength="100" style="width:100%;box-sizing:border-box">
+          <input type="text" id="window-title" placeholder="e.g. code.js" maxlength="100">
         </div>
-        <div class="field" style="margin-top:10px">
+        <div class="field" id="lineno-switch-field">
           <label class="switch" id="lineno-switch">
             <div class="switch-track"></div>
             <span>Line numbers</span>
           </label>
         </div>
-        <div id="lineno-sub" style="margin-top:8px;display:none">
+        <div id="lineno-sub">
           <div class="field-label">First line number</div>
           <input type="number" id="first-line-number" min="0" max="9999" value="1">
-          <div class="color-row" style="margin-top:8px">
+          <div class="color-row" id="lineno-color-row">
             <span class="color-label">Color</span>
             <input type="color" id="lineno-color" value="#888888">
-            <button class="btn" id="lineno-color-auto" style="padding:4px 8px;font-size:10px">Auto</button>
+            <button class="btn" id="lineno-color-auto">Auto</button>
           </div>
         </div>
         <div class="field">
@@ -329,20 +327,20 @@
             <div class="switch-track"></div>
             <span>Drop shadow</span>
           </label>
-          <div id="shadow-sub" style="margin-top:8px">
+          <div id="shadow-sub">
             <div class="field-label">Shadow blur <span class="field-value" id="shadow-blur-val"></span></div>
             <input type="range" id="shadow-blur" min="0" max="80" step="2">
           </div>
-          <div class="field" style="margin-top:8px">
+          <div class="field" id="window-opacity-field">
             <div class="field-label">Window opacity <span class="field-value" id="window-opacity-val"></span></div>
             <input type="range" id="window-opacity" min="10" max="100" step="5">
           </div>
         </div>
-        <div class="field" style="margin-top:10px">
+        <div class="field" id="border-style-field">
           <div class="field-label">Border</div>
           <div class="cs-dropdown" id="border-style-dropdown">
             <button class="cs-dropdown-trigger" id="border-style-trigger" type="button">
-              <div id="border-style-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <div id="border-style-trigger-name"></div>
               <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
             </button>
             <div class="cs-dropdown-panel" id="border-style-panel">
@@ -350,7 +348,7 @@
             </div>
           </div>
         </div>
-        <div id="border-sub" style="display:none;margin-top:8px">
+        <div id="border-sub">
           <div class="field">
             <div class="field-label">Border Width <span class="field-value" id="border-width-val"></span></div>
             <input type="range" id="border-width" min="1" max="20" step="1">
@@ -367,8 +365,8 @@
         <div class="field">
           <div class="cs-dropdown" id="filter-dropdown">
             <button class="cs-dropdown-trigger" id="filter-trigger" type="button">
-              <div id="filter-trigger-preview" style="width:20px;height:20px;border-radius:4px;flex-shrink:0"></div>
-              <div id="filter-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <div id="filter-trigger-preview"></div>
+              <div id="filter-trigger-name"></div>
               <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
             </button>
             <div class="cs-dropdown-panel" id="filter-panel">
@@ -387,8 +385,8 @@
         <div class="field">
           <div class="cs-dropdown" id="texture-dropdown">
             <button class="cs-dropdown-trigger" id="texture-trigger" type="button">
-              <div id="texture-trigger-preview" style="width:20px;height:20px;border-radius:4px;flex-shrink:0"></div>
-              <div id="texture-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <div id="texture-trigger-preview"></div>
+              <div id="texture-trigger-name"></div>
               <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
             </button>
             <div class="cs-dropdown-panel" id="texture-panel">
@@ -407,7 +405,7 @@
         <div class="field">
           <div class="cs-dropdown" id="text-style-dropdown">
             <button class="cs-dropdown-trigger" id="text-style-trigger" type="button">
-              <div id="text-style-trigger-name" style="font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"></div>
+              <div id="text-style-trigger-name"></div>
               <svg class="cs-caret" viewBox="0 0 8 5" fill="currentColor"><path d="M0 0l4 5 4-5z"/></svg>
             </button>
             <div class="cs-dropdown-panel" id="text-style-panel">
@@ -471,7 +469,7 @@
             <input type="color" id="glare-color">
           </div>
         </div>
-        <button class="btn" id="reset-glare" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset Glare</button>
+        <button class="btn" id="reset-glare">Reset Glare</button>
       </div>
 
       <div class="section collapsible collapsed">
@@ -488,7 +486,7 @@
           <div class="field-label">Depth Y° <span class="field-value" id="depthy-val"></span></div>
           <input type="range" id="depthangleY" min="-60" max="60" step="1">
         </div>
-        <button class="btn" id="reset-3d" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset 3D</button>
+        <button class="btn" id="reset-3d">Reset 3D</button>
       </div>
 
       <div class="section collapsible collapsed">
@@ -509,7 +507,7 @@
           <div class="field-label">Bottom width <span class="field-value" id="trap-bottom-val"></span></div>
           <input type="range" id="trap-bottom" min="20" max="100" step="1">
         </div>
-        <button class="btn" id="reset-trap" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset Trapezoid</button>
+        <button class="btn" id="reset-trap">Reset Trapezoid</button>
       </div>
 
       <div class="section collapsible collapsed">
@@ -547,10 +545,10 @@
           <div class="field-label">Amount <span class="field-value" id="lens-amount-val"></span></div>
           <input type="range" id="lens-amount" min="-100" max="100" step="1">
         </div>
-        <div style="display:flex;gap:6px;font-size:10px;opacity:.5;margin-top:-4px;margin-bottom:4px">
-          <span>◀ concave (−)</span><span style="flex:1;text-align:center">flat</span><span>convex (+) ▶</span>
+        <div id="lens-hint">
+          <span>◀ concave (−)</span><span id="lens-hint-center">flat</span><span>convex (+) ▶</span>
         </div>
-        <button class="btn" id="reset-lens" style="width:100%;justify-content:center;font-size:10px;margin-top:4px">Reset Lens</button>
+        <button class="btn" id="reset-lens">Reset Lens</button>
       </div>
 
       <div class="section collapsible collapsed">
@@ -566,7 +564,7 @@
         </div>
         <div class="field">
           <div class="field-label">Aspect Ratio</div>
-          <div class="toggle-group" id="aspect-ratio-group" style="flex-wrap:wrap">
+            <div class="toggle-group" id="aspect-ratio-group">
             <button class="toggle-btn" data-val="custom">Custom</button>
             <button class="toggle-btn" data-val="16:9">16:9</button>
             <button class="toggle-btn" data-val="3:2">3:2</button>
@@ -592,7 +590,7 @@
       </div>
 
       <div class="section">
-        <button class="btn" id="randomize-btn" style="width:100%;justify-content:center;margin-top:8px">
+        <button class="btn" id="randomize-btn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
           Randomize parameters
         </button>
@@ -604,7 +602,7 @@
     <main id="editor-panel">
       <div class="panel-header">
         <span class="panel-title">Input</span>
-        <button class="btn" id="clear-btn" style="padding:3px 9px;font-size:10px">Clear</button>
+        <button class="btn" id="clear-btn">Clear</button>
       </div>
       <div id="code-editor-wrap">
         <div id="code-highlight" aria-hidden="true"></div>

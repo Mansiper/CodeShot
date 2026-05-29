@@ -114,7 +114,7 @@ input[type=text]::placeholder{color:var(--text-dim)}
 .theme-btn.active .theme-name{color:var(--text)}
 #theme-dropdown .cs-dropdown-panel{max-height:190px}
 /* ─── Theme editor ───────────────────────────── */
-#theme-editor{border:1px solid var(--border);border-radius:7px;padding:8px;background:var(--panel2)}
+#theme-editor{display:none;margin-top:8px;border:1px solid var(--border);border-radius:7px;padding:8px;background:var(--panel2)}
 .te-title{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
 .te-colors{display:grid;grid-template-columns:1fr 1fr;gap:4px 6px;margin-bottom:8px}
 .te-row{display:flex;align-items:center;gap:5px}
@@ -166,6 +166,46 @@ input[type=text]::placeholder{color:var(--text-dim)}
 .logo-sub{font-size:10px;color:var(--text-dim)}
 .header-right{display:flex;gap:6px;align-items:center}
 #canvas-info{font-size:10px;color:var(--text-dim);margin-right:6px}
+/* ─── Presets section ────────────────────────── */
+#presets-list{margin-bottom:8px}
+#preset-name-row{display:flex;gap:6px;align-items:center}
+#preset-name-input{flex:1}
+#save-preset-btn{padding:4px 10px;font-size:11px;flex-shrink:0}
+/* ─── Parameters section ─────────────────────── */
+#params-title{display:flex;align-items:center;justify-content:space-between}
+#reset-params-btn{padding:3px 9px;font-size:10px}
+/* ─── Appearance section ─────────────────────── */
+#plain-font-wrap{display:none}
+#text-color-wrap{display:none}
+#plain-align-wrap{margin-top:8px}
+#md-settings-wrap{display:none}
+/* ─── Theme picker ───────────────────────────── */
+#theme-picker-row{display:flex;gap:5px;align-items:flex-start}
+#theme-dropdown{flex:1;min-width:0}
+#theme-trigger-swatches{gap:2px}
+#theme-trigger-name,#border-style-trigger-name,#filter-trigger-name,#texture-trigger-name,#text-style-trigger-name{font-size:10.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+#theme-edit-btn{flex-shrink:0;padding:6px 9px}
+/* ─── Frame section ──────────────────────────── */
+#window-title-wrap{display:none}
+#lineno-switch-field{margin-top:10px}
+#lineno-sub{margin-top:8px;display:none}
+#lineno-color-row{margin-top:8px}
+#lineno-color-auto{padding:4px 8px;font-size:10px}
+#shadow-sub{margin-top:8px}
+#window-opacity-field{margin-top:8px}
+#border-style-field{margin-top:10px}
+#border-sub{display:none;margin-top:8px}
+/* ─── Filters / Textures ─────────────────────── */
+#filter-trigger-preview,#texture-trigger-preview{width:20px;height:20px;border-radius:4px;flex-shrink:0}
+/* ─── Section reset buttons ──────────────────── */
+#reset-glare,#reset-3d,#reset-trap,#reset-lens{width:100%;justify-content:center;font-size:10px;margin-top:4px}
+/* ─── Lens section ───────────────────────────── */
+#lens-hint{display:flex;gap:6px;font-size:10px;opacity:.5;margin-top:-4px;margin-bottom:4px}
+#lens-hint-center{flex:1;text-align:center}
+/* ─── Settings footer ────────────────────────── */
+#randomize-btn{width:100%;justify-content:center;margin-top:8px}
+/* ─── Editor panel ───────────────────────────── */
+#clear-btn{padding:3px 9px;font-size:10px}
 /* ─── Responsive ─────────────────────────────── */
 @media(max-width:800px){
   #main{flex-direction:column}
