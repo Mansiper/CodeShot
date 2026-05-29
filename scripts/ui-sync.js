@@ -38,11 +38,11 @@ function syncUI() {
   document.getElementById('ligatures-wrap').style.display   = isText ? 'none' : '';
   document.getElementById('tab-size-wrap').style.display    = isText ? 'none' : '';
   document.getElementById('theme-wrap').style.display       = isText ? 'none' : '';
-  document.getElementById('text-color-wrap').style.display  = (isText || isMd) ? '' : 'none';
+  document.getElementById('text-color-wrap').style.display  = (isText || isMd) ? 'block' : 'none';
   document.getElementById('plain-align-wrap').style.display = isMd ? 'none' : '';
   document.getElementById('code-font-wrap').style.display   = (isText || isMd) ? 'none' : '';
-  document.getElementById('plain-font-wrap').style.display  = (isText || isMd) ? '' : 'none';
-  document.getElementById('md-settings-wrap').style.display = isMd ? '' : 'none';
+  document.getElementById('plain-font-wrap').style.display  = (isText || isMd) ? 'block' : 'none';
+  document.getElementById('md-settings-wrap').style.display = isMd ? 'block' : 'none';
   if (document.getElementById('plain-font-select').value !== state.plainFont) {
     document.getElementById('plain-font-select').value = state.plainFont;
   }
@@ -86,7 +86,7 @@ function syncUI() {
   document.querySelectorAll('.border-style-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.borderStyle === state.borderStyle));
   const hasBorder = state.borderStyle !== 'none';
-  document.getElementById('border-sub').style.display = hasBorder ? '' : 'none';
+  document.getElementById('border-sub').style.display = hasBorder ? 'block' : 'none';
   setRange('border-width', state.borderWidth, 'border-width-val', v => v + 'px');
   document.getElementById('border-color').value = state.borderColor;
 
