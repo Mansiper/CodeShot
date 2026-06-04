@@ -62,7 +62,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 2. **Pick a mode** — Code (with syntax highlighting), Plain Text, or Markdown
 3. **Customize** appearance using the settings panel — theme, font, background, effects
 4. **Preview** updates live in the right panel
-5. **Export PNG** or **Copy PNG** to clipboard
+5. **Export** or **Copy** to clipboard
 
 ---
 
