@@ -14,6 +14,17 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 
 ---
 
+<h3>
+<details>
+<summary>Result example (instead of a thousand words)</summary>
+<div align="center">
+
+![CodeShot example screenshot](example.png "CodeShot example screenshot")
+
+</div>
+</details>
+</h3>
+
 ## Features
 
 - **Syntax highlighting** for 40+ languages via [highlight.js](https://highlightjs.org/) — JavaScript, TypeScript, Python, Rust, Go, SQL, and more
@@ -62,7 +73,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 2. **Pick a mode** — Code (with syntax highlighting), Plain Text, or Markdown
 3. **Customize** appearance using the settings panel — theme, font, background, effects
 4. **Preview** updates live in the right panel
-5. **Export** or **Copy** to clipboard
+5. **Export** or **Copy to clipboard**
 
 ---
 
