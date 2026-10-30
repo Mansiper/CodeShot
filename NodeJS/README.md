@@ -282,6 +282,16 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 |---|---|---|---|
 | `lens` | number | `0` | Lens distortion intensity. Positive = convex/barrel (center magnified), negative = concave/pincushion (transparent corners), 0 = flat. Range −100 to 100. |
 
+### Vignette Overlay
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `vignette_variant` | string | `none` | `none` `radial` `inset-frame` `corners` `top-bottom` `left-right` `spotlight` `light-vignette` |
+| `vignette_color` | hex | `000000` | Vignette edge color (no `#`) |
+| `vignette_intensity` | number | `0` | Vignette intensity 0–100 %. `0` disables vignette. |
+| `vignette_blend` | string | `normal` | Blend mode: `normal` `multiply` `overlay` `soft-light` `hard-light` `screen` `lighten` `darken` `color-dodge` `color-burn` |
+| `vignette_apply` | string | `whole-image` | Placement: `whole-image` `background-only` `above-window` `below-window` |
+
 ### Export Size
 
 | Param | Type | Default | Description |

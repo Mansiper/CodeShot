@@ -148,6 +148,22 @@ const TEXT_STYLES = [
   { id: 'retro-shadow',   name: 'Retro Shadow',   hasColor1: true,  hasColor2: false, hasIntensity: true  },
 ];
 
+const VIGNETTE_VARIANTS = [
+  { id: 'none',          name: 'None' },
+  { id: 'radial',        name: 'Radial / Elliptical' },
+  { id: 'inset-frame',   name: 'Inset Frame' },
+  { id: 'corners',       name: 'Corners Only' },
+  { id: 'top-bottom',    name: 'Top + Bottom' },
+  { id: 'left-right',    name: 'Left + Right' },
+  { id: 'spotlight',     name: 'Spotlight' },
+  { id: 'light-vignette',name: 'Light Vignette' },
+];
+const VIGNETTE_BLEND_MODES = [
+  'normal','multiply','overlay','soft-light','hard-light',
+  'screen','lighten','darken','color-dodge','color-burn',
+];
+const VIGNETTE_APPLY_TARGETS = ['whole-image','background-only','above-window','below-window'];
+
 const LANGUAGES = ['bash','csharp','c','cpp','css','dart','pascal','dockerfile','elixir','erlang','fsharp','go',
   'graphql','groovy','haskell','html','ini','java','javascript','json','jsx','kotlin','tex','lisp','lua',
   'makefile','markdown','matlab','nginx','objectivec','perl','php','powershell','python','r','ruby','rust','scala',

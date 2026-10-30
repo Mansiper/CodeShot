@@ -44,6 +44,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **3D transform** — rotate Z, depth X/Y perspective
 - **Trapezoid distortion** — warp the frame edges independently
 - **Lens effect** — convex (+) barrel or concave (−) pincushion distortion that physically curves the window shape
+- **Vignette overlay** — radial, inset-frame, corners-only, top/bottom, left/right, spotlight, or light vignette with color, intensity, blend mode, and layer placement controls
 - **Gradient blur** — directional blur fade from any edge
 - **Filters** — B&W, Sepia, Cool, Warm, Faded, Vivid, Cinematic, Noir, Amber, and more (20 filters)
 - **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter, and more (20 textures)

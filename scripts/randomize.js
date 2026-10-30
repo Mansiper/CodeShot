@@ -86,6 +86,21 @@ function randomizeParams() {
     state.glareEnabled = false;
   }
 
+  // Vignette
+  if (Math.random() < 0.35) {
+    state.vignetteVariant = pick(VIGNETTE_VARIANTS.filter(v => v.id !== 'none').map(v => v.id));
+    state.vignetteColor = Math.random() < 0.2 ? rgbHex(rnd(180, 255), rnd(180, 255), rnd(180, 255)) : '#000000';
+    state.vignetteIntensity = rnd(20, 70);
+    state.vignetteBlendMode = pick(VIGNETTE_BLEND_MODES);
+    state.vignetteApplyTo = pick(VIGNETTE_APPLY_TARGETS);
+  } else {
+    state.vignetteVariant = DEFAULTS.vignetteVariant;
+    state.vignetteColor = DEFAULTS.vignetteColor;
+    state.vignetteIntensity = DEFAULTS.vignetteIntensity;
+    state.vignetteBlendMode = DEFAULTS.vignetteBlendMode;
+    state.vignetteApplyTo = DEFAULTS.vignetteApplyTo;
+  }
+
   // Optional subtle 3D tilt
   if (Math.random() < 0.2) {
     state.tiltAngle   = rnd(-15, 15);

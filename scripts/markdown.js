@@ -612,6 +612,48 @@ function doRender() {
   ctx.clearRect(0,0,cW,cH);
   drawBackground(ctx, cW, cH);
 
+  const vignetteCfg = {
+    variant: state.vignetteVariant,
+    color: state.vignetteColor,
+    intensity: state.vignetteIntensity,
+    blendMode: state.vignetteBlendMode,
+  };
+  const vignetteTarget = state.vignetteApplyTo || 'whole-image';
+
+  function drawWindowQuadPath(pathCtx) {
+    pathCtx.beginPath();
+    pathCtx.moveTo(corners[0].x, corners[0].y);
+    for (let i = 1; i < 4; i++) pathCtx.lineTo(corners[i].x, corners[i].y);
+    pathCtx.closePath();
+  }
+
+  function applyVignetteFor(stage) {
+    if (state.vignetteIntensity <= 0) return;
+    if (vignetteTarget === 'below-window' && stage === 'below-window') {
+      applyVignetteOverlay(ctx, cW, cH, vignetteCfg);
+      return;
+    }
+    if (vignetteTarget === 'above-window' && stage === 'above-window') {
+      applyVignetteOverlay(ctx, cW, cH, vignetteCfg);
+      return;
+    }
+    if (vignetteTarget === 'whole-image' && stage === 'whole-image') {
+      applyVignetteOverlay(ctx, cW, cH, vignetteCfg);
+      return;
+    }
+    if (vignetteTarget === 'background-only' && stage === 'background-only') {
+      const tmp = document.createElement('canvas');
+      tmp.width = cW;
+      tmp.height = cH;
+      const tctx = tmp.getContext('2d');
+      applyVignetteOverlay(tctx, cW, cH, vignetteCfg);
+      tctx.globalCompositeOperation = 'destination-out';
+      drawWindowQuadPath(tctx);
+      tctx.fill();
+      ctx.drawImage(tmp, 0, 0);
+    }
+  }
+
   const tZ  = state.tiltAngle   * Math.PI/180;
   const rX  = state.depthAngle  * Math.PI/180;
   const rY  = state.depthAngleY * Math.PI/180;
@@ -623,6 +665,8 @@ function doRender() {
   if (oxPx !== 0 || oyPx !== 0) {
     corners = corners.map(c => ({x: c.x + oxPx, y: c.y + oyPx}));
   }
+
+  applyVignetteFor('below-window');
 
   // Shadow
   if (state.showShadow) {
@@ -647,6 +691,9 @@ function doRender() {
     drawIntoQuad(ctx, off, corners);
   }
   ctx.restore();
+
+  applyVignetteFor('background-only');
+  applyVignetteFor('above-window');
 
   // Apply image filter over the full canvas
   const filterStr = buildFilterString(state.filter, state.filterIntensity);
@@ -688,6 +735,8 @@ function doRender() {
       cW = finalW; cH = finalH;
     }
   }
+
+  applyVignetteFor('whole-image');
 
   // Watermark
   if (showWatermark) {

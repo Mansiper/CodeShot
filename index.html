@@ -552,6 +552,56 @@
       </div>
 
       <div class="section collapsible collapsed">
+        <div class="section-title">Vignette</div>
+        <div class="field">
+          <div class="field-label">Variant</div>
+          <div class="toggle-group" id="vignette-variant-group">
+            <button class="toggle-btn" data-val="none">None</button>
+            <button class="toggle-btn" data-val="radial">Radial</button>
+            <button class="toggle-btn" data-val="inset-frame">Inset</button>
+            <button class="toggle-btn" data-val="corners">Corners</button>
+            <button class="toggle-btn" data-val="top-bottom">Top/Bottom</button>
+            <button class="toggle-btn" data-val="left-right">Left/Right</button>
+            <button class="toggle-btn" data-val="spotlight">Spotlight</button>
+            <button class="toggle-btn" data-val="light-vignette">Light</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Color</div>
+          <input type="color" id="vignette-color">
+        </div>
+        <div class="field">
+          <div class="field-label">Intensity <span class="field-value" id="vignette-intensity-val"></span></div>
+          <input type="range" id="vignette-intensity" min="0" max="100" step="1">
+        </div>
+        <div class="field">
+          <div class="field-label">Blend mode</div>
+          <select id="vignette-blend">
+            <option value="normal">Normal</option>
+            <option value="multiply">Multiply</option>
+            <option value="overlay">Overlay</option>
+            <option value="soft-light">Soft Light</option>
+            <option value="hard-light">Hard Light</option>
+            <option value="screen">Screen</option>
+            <option value="lighten">Lighten</option>
+            <option value="darken">Darken</option>
+            <option value="color-dodge">Color Dodge</option>
+            <option value="color-burn">Color Burn</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Apply to</div>
+          <div class="toggle-group" id="vignette-apply-group">
+            <button class="toggle-btn" data-val="whole-image">Whole image</button>
+            <button class="toggle-btn" data-val="background-only">Background only</button>
+            <button class="toggle-btn" data-val="above-window">Above window</button>
+            <button class="toggle-btn" data-val="below-window">Below window</button>
+          </div>
+        </div>
+        <button class="btn" id="reset-vignette">Reset Vignette</button>
+      </div>
+
+      <div class="section collapsible collapsed">
         <div class="section-title">Export Size</div>
         <div class="field">
           <div class="field-label">Scale</div>
@@ -657,6 +707,7 @@
 <script src="scripts/textures.js"></script>
 <script src="scripts/screen-glare.js"></script>
 <script src="scripts/lens-distortion.js"></script>
+<script src="scripts/vignette-overlay.js"></script>
 <script src="scripts/render.js"></script>
 <script src="scripts/markdown.js"></script>
 <script src="scripts/canvas-scaling.js"></script>

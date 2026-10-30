@@ -167,6 +167,13 @@ function syncUI() {
   // Lens
   setRange('lens-amount', state.lensAmount, 'lens-amount-val', v => { const n = Math.round(v); return n > 0 ? '+' + n : String(n); });
 
+  // Vignette
+  document.querySelectorAll('#vignette-variant-group .toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.val === state.vignetteVariant));
+  document.querySelectorAll('#vignette-apply-group .toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.val === state.vignetteApplyTo));
+  document.getElementById('vignette-color').value = state.vignetteColor;
+  document.getElementById('vignette-blend').value = state.vignetteBlendMode;
+  setRange('vignette-intensity', state.vignetteIntensity, 'vignette-intensity-val', v => v + '%');
+
   applyEditorTheme();
   updateEditorHighlight();
 }

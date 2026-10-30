@@ -123,6 +123,11 @@ function buildCurlCommand() {
   pushIfChanged('glare_intensity', state.glareIntensity, DEFAULTS.glareIntensity);
   pushIfChanged('glare_color', toHexParam(state.glareColor), 'ffffff');
   pushIfChanged('lens', state.lensAmount, 0);
+  pushIfChanged('vignette_variant', state.vignetteVariant, 'none');
+  pushIfChanged('vignette_color', toHexParam(state.vignetteColor), '000000');
+  pushIfChanged('vignette_intensity', state.vignetteIntensity, 0);
+  pushIfChanged('vignette_blend', state.vignetteBlendMode, 'normal');
+  pushIfChanged('vignette_apply', state.vignetteApplyTo, 'whole-image');
   pushIfChanged('ligatures', state.ligatures, true);
   pushIfChanged('letter_spacing', state.letterSpacing, 0);
   pushIfChanged('tab_size', state.tabSize, 4);

@@ -86,6 +86,7 @@ Note: Request text may mention input.html. In this project, the correct file is 
 - scripts/panel-resize.js: Editor/preview split resize logic. Change for split-layout resize behavior.
 - scripts/ui-theme.js: App light/dark UI mode. Change for shell theme-toggle behavior.
 - scripts/init.js: App startup sequence. Change when adding startup steps.
+- scripts/vignette-overlay.js: Vignette overlay effect math and draw. Change for new variants, blend modes, or intensity handling.
 
 ## Fast impact matrix for parameter changes
 1. Structural/schema parameter (new key, rename, type change): must touch state.js, ui-sync.js, events.js, export.js, storage.js, server.js, both READMEs, index.html.

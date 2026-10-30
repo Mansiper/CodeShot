@@ -133,6 +133,7 @@ function bindEvents() {
   bindR('window-offset-x', 'windowOffsetX', 'window-offset-x-val', v => v + '%');
   bindR('window-offset-y', 'windowOffsetY', 'window-offset-y-val', v => v + '%');
   bindR('lens-amount', 'lensAmount', 'lens-amount-val', v => { const n = Math.round(v); return n > 0 ? '+' + n : String(n); });
+  bindR('vignette-intensity', 'vignetteIntensity', 'vignette-intensity-val', v => v + '%');
 
   // Colors
   document.getElementById('bg-solid-color').addEventListener('input', e => change('bgSolid', e.target.value));
@@ -141,6 +142,8 @@ function bindEvents() {
   document.getElementById('selection-color').addEventListener('input', e => {
     change('selectionColor', e.target.value);
   });
+  document.getElementById('vignette-color').addEventListener('input', e => change('vignetteColor', e.target.value));
+  document.getElementById('vignette-blend').addEventListener('change', e => change('vignetteBlendMode', e.target.value));
 
   // Toggle groups
   document.getElementById('bg-type-group').addEventListener('click', e => {
@@ -150,6 +153,14 @@ function bindEvents() {
   document.getElementById('gblur-dir-group').addEventListener('click', e => {
     const b = e.target.closest('.toggle-btn'); if (!b) return;
     change('gradBlurDir', b.dataset.val); syncUI();
+  });
+  document.getElementById('vignette-variant-group').addEventListener('click', e => {
+    const b = e.target.closest('.toggle-btn'); if (!b) return;
+    change('vignetteVariant', b.dataset.val); syncUI();
+  });
+  document.getElementById('vignette-apply-group').addEventListener('click', e => {
+    const b = e.target.closest('.toggle-btn'); if (!b) return;
+    change('vignetteApplyTo', b.dataset.val); syncUI();
   });
   document.getElementById('plain-align-group').addEventListener('click', e => {
     const b = e.target.closest('.toggle-btn'); if (!b) return;
@@ -401,6 +412,14 @@ function bindEvents() {
   });
   document.getElementById('reset-lens').addEventListener('click', () => {
     state.lensAmount = 0;
+    syncUI(); scheduleRender(); scheduleSave();
+  });
+  document.getElementById('reset-vignette').addEventListener('click', () => {
+    state.vignetteVariant = DEFAULTS.vignetteVariant;
+    state.vignetteColor = DEFAULTS.vignetteColor;
+    state.vignetteIntensity = DEFAULTS.vignetteIntensity;
+    state.vignetteBlendMode = DEFAULTS.vignetteBlendMode;
+    state.vignetteApplyTo = DEFAULTS.vignetteApplyTo;
     syncUI(); scheduleRender(); scheduleSave();
   });
   document.getElementById('reset-params-btn').addEventListener('click', () => {

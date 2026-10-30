@@ -103,6 +103,9 @@ const VALID_SCALES   = [1, 2, 3, 4];
 const VALID_ASPECTS  = ['custom','16:9','3:2','4:3','5:4','1:1','4:5','3:4','2:3','9:16'];
 const VALID_BLUR_DIR = ['top','bottom','left','right'];
 const VALID_ALIGN    = ['left','center','right','justify'];
+const VALID_VIGNETTE_VARIANTS = ['none','radial','inset-frame','corners','top-bottom','left-right','spotlight','light-vignette'];
+const VALID_VIGNETTE_BLENDS = ['normal','multiply','overlay','soft-light','hard-light','screen','lighten','darken','color-dodge','color-burn'];
+const VALID_VIGNETTE_APPLY = ['whole-image','background-only','above-window','below-window'];
 
 // ─── Map query-string params to the renderer state object ────────────────────
 
@@ -174,6 +177,12 @@ function buildState(q, code) {
     glareColor:       parseHex (q.glare_color)                    || '#ffffff',
     // Lens distortion
     lensAmount:       parseNum (q.lens,             0),
+    // Vignette overlay
+    vignetteVariant:  parseEnum(q.vignette_variant, VALID_VIGNETTE_VARIANTS, 'none'),
+    vignetteColor:    parseHex (q.vignette_color)                 || '#000000',
+    vignetteIntensity:parseNum (q.vignette_intensity, 0),
+    vignetteBlendMode:parseEnum(q.vignette_blend,   VALID_VIGNETTE_BLENDS, 'normal'),
+    vignetteApplyTo:  parseEnum(q.vignette_apply,   VALID_VIGNETTE_APPLY, 'whole-image'),
     // Scale & aspect ratio
     scaleMultiplier:  VALID_SCALES.includes(parseNum(q.scale, 1)) ? parseNum(q.scale, 1) : 1,
     aspectRatio:      parseEnum(q.aspect_ratio, VALID_ASPECTS, 'custom'),
@@ -290,6 +299,19 @@ function buildRandomState(q, code) {
   base.trapTop        = 100; base.trapBottom = 100;
   base.gradBlur       = false;
   base.lensAmount     = 0;
+  if (Math.random() < 0.35) {
+    base.vignetteVariant = pick(VALID_VIGNETTE_VARIANTS.filter(v => v !== 'none'));
+    base.vignetteColor = Math.random() < 0.2 ? rgb(rnd(180, 255), rnd(180, 255), rnd(180, 255)) : '#000000';
+    base.vignetteIntensity = rnd(20, 70);
+    base.vignetteBlendMode = pick(VALID_VIGNETTE_BLENDS);
+    base.vignetteApplyTo = pick(VALID_VIGNETTE_APPLY);
+  } else {
+    base.vignetteVariant = 'none';
+    base.vignetteColor = '#000000';
+    base.vignetteIntensity = 0;
+    base.vignetteBlendMode = 'normal';
+    base.vignetteApplyTo = 'whole-image';
+  }
   base.windowOffsetX  = 0;
   base.windowOffsetY  = 0;
   base.scaleMultiplier = 1;
@@ -535,6 +557,12 @@ app.get('/api/info', (_req, res) => {
       glare_intensity:    { type: 'number',  range: '0–100',               default: 60,               description: 'Glare brightness 0–100%' },
       glare_color:        { type: 'hex',     example: 'ffffff',            default: 'ffffff',         description: 'Glare color (no #)' },      // ── Lens distortion ────────────────────────────────────────────────────
       lens:               { type: 'number',  range: '-100–100',            default: 0,                description: 'Lens distortion: positive = convex/barrel, negative = concave/pincushion, 0 = flat' },
+      // ── Vignette overlay ──────────────────────────────────────────────────
+      vignette_variant:   { type: 'string',  values: VALID_VIGNETTE_VARIANTS, default: 'none',        description: 'Vignette style. Use "none" to disable, or choose radial, inset frame, corners-only, directional strips, spotlight, or light vignette' },
+      vignette_color:     { type: 'hex',     example: '000000',            default: '000000',         description: 'Vignette edge color (no #)' },
+      vignette_intensity: { type: 'number',  range: '0–100',               default: 0,                description: 'Vignette intensity %; 0 disables the effect' },
+      vignette_blend:     { type: 'string',  values: VALID_VIGNETTE_BLENDS, default: 'normal',        description: 'Canvas blend mode used for vignette compositing' },
+      vignette_apply:     { type: 'string',  values: VALID_VIGNETTE_APPLY, default: 'whole-image',    description: 'Placement target: whole image, background only, above window, or below window' },
       // ── Export size ────────────────────────────────────────────────────────
       scale:              { type: 'number',  values: VALID_SCALES,         default: 1,                description: 'Output scale multiplier — all pixel dimensions are multiplied by this value (1, 2, 3, or 4)' },
       aspect_ratio:       { type: 'string',  values: VALID_ASPECTS,        default: 'custom',         description: 'Lock the output canvas to a fixed aspect ratio by padding the background. "custom" = no padding.' },
