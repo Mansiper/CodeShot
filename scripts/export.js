@@ -96,6 +96,11 @@ function buildCurlCommand() {
   pushIfChanged('filter_intensity', state.filterIntensity, 100);
   pushIfChanged('texture', state.texture, 'none');
   pushIfChanged('texture_intensity', state.textureIntensity, 50);
+  pushIfChanged('texture_seed', state.textureSeed, 42);
+  pushIfChanged('texture_blood_color', toHexParam(state.textureBloodColor), '8b0000');
+  pushIfChanged('texture_blood_mix', state.textureBloodMix, 50);
+  pushIfChanged('texture_rain_fog', state.textureRainFog, false);
+  pushIfChanged('texture_position', state.texturePosition, 'whole-picture');
   pushIfChanged('text_style', state.textStyle, 'none');
   pushIfChanged('text_style_color1', toHexParam(state.textStyleColor1), '89b4fa');
   pushIfChanged('text_style_color2', toHexParam(state.textStyleColor2), 'cba6f7');

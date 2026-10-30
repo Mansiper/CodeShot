@@ -35,6 +35,7 @@ html,body{height:100%;overflow:hidden;font-family:var(--ui);font-size:12px;backg
 .field{margin-bottom:11px}
 .field-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;color:var(--text-dim);font-size:10.5px}
 .field-value{color:var(--accent)}
+.field-sublabel{font-size:10px;opacity:.6;margin-bottom:3px;color:var(--text-dim)}
 /* ─── Editor + Preview ───────────────────────── */
 #editor-panel,#preview-panel{display:flex;flex-direction:column;overflow:hidden;min-width:0;flex-shrink:0}
 #editor-panel{border-right:1px solid var(--border)}

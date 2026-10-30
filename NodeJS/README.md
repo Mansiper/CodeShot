@@ -210,8 +210,13 @@ curl -X POST "https://codeshot-u1ol.onrender.com/?lang=python&theme=dracula&scal
 
 | Param | Type | Default | Description |
 |---|---|---|---|
-| `texture` | string | `none` | `none` `paper` `grain` `linen` `wood` `metal-shiny` `metal-brushed` `carbon` `scanlines` `glitter` `noise` `dots` `grid` `diagonal` `crosshatch` `hex` `concrete` `denim` `vignette` `frosted` |
+| `texture` | string | `none` | `none` `paper` `grain` `linen` `wood` `metal-shiny` `metal-brushed` `carbon` `scanlines` `glitter` `noise` `dots` `grid` `diagonal` `crosshatch` `hex` `concrete` `denim` `vignette` `frosted` `blood` `rain` |
 | `texture_intensity` | number | `50` | Texture opacity 0–100 % |
+| `texture_seed` | number | `42` | Seed for blood/rain texture RNG. Same seed always produces the same pattern |
+| `texture_blood_color` | hex | `8b0000` | Blood color (no `#`). Used by `texture=blood` |
+| `texture_blood_mix` | number | `50` | Blood texture mix: 0=splatters only, 100=drips & smears only |
+| `texture_rain_fog` | bool | `false` | Enable steamy/foggy window effect for `texture=rain` |
+| `texture_position` | string | `whole-picture` | `whole-picture` `background-only` `over-window` (`over-window` is clipped to the window/frame only) |
 
 ### Text Style
 

@@ -291,6 +291,29 @@ function bindEvents() {
   });
   bindR('texture-intensity', 'textureIntensity', 'texture-intensity-val', v => v + '%');
 
+  // Texture position
+  document.getElementById('texture-position-group').addEventListener('click', e => {
+    const b = e.target.closest('.toggle-btn'); if (!b) return;
+    change('texturePosition', b.dataset.val);
+    syncUI();
+  });
+
+  // Blood-specific controls
+  document.getElementById('texture-blood-color').addEventListener('input', e => change('textureBloodColor', e.target.value));
+  bindR('texture-blood-mix', 'textureBloodMix', 'texture-blood-mix-val', v => v + '%');
+  document.getElementById('texture-reshuffle-blood').addEventListener('click', () => {
+    change('textureSeed', Math.floor(Math.random() * 2**32));
+  });
+
+  // Rain-specific controls
+  document.getElementById('texture-rain-fog-switch').addEventListener('click', () => {
+    change('textureRainFog', !state.textureRainFog);
+    setSwitch('texture-rain-fog-switch', state.textureRainFog);
+  });
+  document.getElementById('texture-reshuffle-rain').addEventListener('click', () => {
+    change('textureSeed', Math.floor(Math.random() * 2**32));
+  });
+
   // Text Style
   document.getElementById('text-style-grid').addEventListener('click', e => {
     const b = e.target.closest('.text-style-btn'); if (!b) return;

@@ -654,6 +654,36 @@ function doRender() {
     }
   }
 
+  function applyTextureFor(stage) {
+    if (state.texture === 'none' || state.textureIntensity === 0) return;
+    const pos = state.texturePosition || 'whole-picture';
+    if (pos === 'background-only' && stage === 'background-only') {
+      const tmp = document.createElement('canvas');
+      tmp.width = cW; tmp.height = cH;
+      const tctx = tmp.getContext('2d');
+      applyTexture(tctx, cW, cH, state.texture, state.textureIntensity);
+      tctx.globalCompositeOperation = 'destination-out';
+      drawWindowQuadPath(tctx);
+      tctx.fill();
+      ctx.drawImage(tmp, 0, 0);
+    } else if (pos === 'over-window' && stage === 'over-window') {
+      const tmp = document.createElement('canvas');
+      tmp.width = cW; tmp.height = cH;
+      const tctx = tmp.getContext('2d');
+      applyTexture(tctx, cW, cH, state.texture, state.textureIntensity);
+      tctx.globalCompositeOperation = 'destination-in';
+      drawWindowQuadPath(tctx);
+      tctx.fill();
+      ctx.drawImage(tmp, 0, 0);
+    } else if (pos === 'whole-picture' && stage === 'whole-picture') {
+      const tmp = document.createElement('canvas');
+      tmp.width = cW; tmp.height = cH;
+      const tctx = tmp.getContext('2d');
+      applyTexture(tctx, cW, cH, state.texture, state.textureIntensity);
+      ctx.drawImage(tmp, 0, 0);
+    }
+  }
+
   const tZ  = state.tiltAngle   * Math.PI/180;
   const rX  = state.depthAngle  * Math.PI/180;
   const rY  = state.depthAngleY * Math.PI/180;
@@ -693,7 +723,9 @@ function doRender() {
   ctx.restore();
 
   applyVignetteFor('background-only');
+  applyTextureFor('background-only');
   applyVignetteFor('above-window');
+  applyTextureFor('over-window');
 
   // Apply image filter over the full canvas
   const filterStr = buildFilterString(state.filter, state.filterIntensity);
@@ -709,7 +741,7 @@ function doRender() {
   }
 
   // Apply texture overlay
-  applyTexture(ctx, cW, cH, state.texture, state.textureIntensity);
+  applyTextureFor('whole-picture');
 
   // Screen glare overlay
   applyGlare(ctx, cW, cH);

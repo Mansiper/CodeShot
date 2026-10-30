@@ -398,6 +398,35 @@
           <div class="field-label">Intensity <span class="field-value" id="texture-intensity-val"></span></div>
           <input type="range" id="texture-intensity" min="0" max="100" step="1">
         </div>
+        <div class="field" id="texture-position-wrap">
+          <div class="field-label">Position</div>
+          <div class="toggle-group" id="texture-position-group">
+            <button class="toggle-btn" data-val="whole-picture">Whole picture</button>
+            <button class="toggle-btn" data-val="background-only">Background only</button>
+            <button class="toggle-btn" data-val="over-window">Over window</button>
+          </div>
+        </div>
+        <div id="texture-extra-controls">
+          <div id="texture-blood-controls">
+            <div class="color-row">
+              <span class="color-label">Blood color</span>
+              <input type="color" id="texture-blood-color">
+            </div>
+            <div class="field">
+              <div class="field-label">Mix <span class="field-value" id="texture-blood-mix-val"></span></div>
+              <div class="field-sublabel">0% = splatters &middot; 100% = drips &amp; smears</div>
+              <input type="range" id="texture-blood-mix" min="0" max="100" step="1">
+            </div>
+            <button class="btn" id="texture-reshuffle-blood">&#x1F500; Reshuffle</button>
+          </div>
+          <div id="texture-rain-controls">
+            <label class="switch" id="texture-rain-fog-switch">
+              <div class="switch-track"></div>
+              <span>Fog / steamy window</span>
+            </label>
+            <button class="btn" id="texture-reshuffle-rain">&#x1F500; Reshuffle</button>
+          </div>
+        </div>
       </div>
 
       <div class="section collapsible collapsed">

@@ -86,8 +86,9 @@ const VALID_FILTERS  = [
 const VALID_TEXTURES = [
   'none','paper','grain','linen','wood','metal-shiny','metal-brushed','carbon',
   'scanlines','glitter','noise','dots','grid','diagonal','crosshatch','hex',
-  'concrete','denim','vignette','frosted',
+  'concrete','denim','vignette','frosted','blood','rain',
 ];
+const VALID_TEXTURE_POSITIONS = ['whole-picture','background-only','over-window'];
 const VALID_TEXT_STYLES = [
   'none','drop-shadow','corner-glow','outline','glow','recessed','embossed',
   'long-shadow','letterpress','retro-shadow','gradient-fill','rainbow',
@@ -149,6 +150,11 @@ function buildState(q, code) {
     filterIntensity:  parseNum (q.filter_intensity, 100),
     texture:          parseEnum(q.texture,        VALID_TEXTURES,   'none'),
     textureIntensity: parseNum (q.texture_intensity, 50),
+    textureSeed:      parseNum (q.texture_seed,        42),
+    textureBloodColor:parseHex (q.texture_blood_color) || '#8b0000',
+    textureBloodMix:  parseNum (q.texture_blood_mix,   50),
+    textureRainFog:   parseBool(q.texture_rain_fog,    false),
+    texturePosition:  parseEnum(q.texture_position, VALID_TEXTURE_POSITIONS, 'whole-picture'),
     textStyle:        parseEnum(q.text_style,       VALID_TEXT_STYLES, 'none'),
     textStyleColor1:  parseHex (q.text_style_color1)                || '#89b4fa',
     textStyleColor2:  parseHex (q.text_style_color2)                || '#cba6f7',
@@ -262,6 +268,13 @@ function buildRandomState(q, code) {
   if (Math.random() < 0.5) {
     base.texture          = pick(VALID_TEXTURES.filter(t => t !== 'none'));
     base.textureIntensity = rnd(20, 70);
+    base.textureSeed      = rnd(0, 2**31);
+    if (base.texture === 'blood') {
+      base.textureBloodMix = rnd(0, 100);
+    }
+    if (base.texture === 'rain') {
+      base.textureRainFog = Math.random() < 0.3;
+    }
   } else {
     base.texture = 'none';
   }
@@ -526,6 +539,11 @@ app.get('/api/info', (_req, res) => {
       // ── Textures ───────────────────────────────────────────────────────────
       texture:            { type: 'string',  values: VALID_TEXTURES,       default: 'none',           description: 'Texture overlay drawn on top of the background' },
       texture_intensity:  { type: 'number',  range: '0–100',               default: 50,               description: 'Texture opacity %' },
+      texture_seed:       { type: 'number',  range: '0–2^32',              default: 42,               description: 'Seed for blood/rain texture RNG. Same seed always produces the same pattern' },
+      texture_blood_color:{ type: 'hex',     example: '8b0000',            default: '8b0000',         description: 'Blood color (no #). Used by texture=blood' },
+      texture_blood_mix:  { type: 'number',  range: '0–100',               default: 50,               description: 'Blood texture mix: 0=splatters only, 100=drips & smears only' },
+      texture_rain_fog:   { type: 'bool',                                   default: false,            description: 'Enable steamy/foggy window effect for texture=rain' },
+      texture_position:   { type: 'string',  values: VALID_TEXTURE_POSITIONS, default: 'whole-picture', description: 'Where the texture is composited: whole-picture (default), background-only (behind the code window), or over-window (clipped to the window/frame only)' },
       // ── Text style ─────────────────────────────────────────────────────────
       text_style:         { type: 'string',  values: VALID_TEXT_STYLES,    default: 'none',           description: 'Text rendering style applied to every character drawn on the canvas' },
       text_style_color1:  { type: 'hex',     example: '89b4fa',            default: '89b4fa',         description: 'Primary style color (shadow, outline, glow, etc.) — no #' },

@@ -47,7 +47,7 @@ Alternative host and Node.js API: [https://codeshot-u1ol.onrender.com](https://c
 - **Vignette overlay** — radial, inset-frame, corners-only, top/bottom, left/right, spotlight, or light vignette with color, intensity, blend mode, and layer placement controls
 - **Gradient blur** — directional blur fade from any edge
 - **Filters** — B&W, Sepia, Cool, Warm, Faded, Vivid, Cinematic, Noir, Amber, and more (20 filters)
-- **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter, and more (20 textures)
+- **Textures** - Paper, Grain, Linen, Wood, Metal-Shiny, Metal-Brushed, Carbon, Scanlines, Glitter, Blood, Rain, and more (22 textures)
 - **Text styles** - Drop Shadow, Glow, Outline, Gradient Fill, Rainbow, Neon Sign, Fire, Metallic, Ice, Gold, and more (20 effects)
 - **Screen glare** — simulated light source with configurable X/Y position (can exceed canvas bounds by 50%), distance from screen (controls spread), horizontal/vertical angle (physically-based ellipse elongation — 0°/0° = circle, angled = elongated in the direction of incidence), blur, intensity, and color
 - **Drop shadow** with adjustable blur

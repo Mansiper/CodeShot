@@ -130,6 +130,25 @@ function syncUI() {
     document.getElementById('texture-trigger-name').textContent = activeTex.name;
   }
 
+  // Texture position
+  document.querySelectorAll('#texture-position-group .toggle-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.val === (state.texturePosition || 'whole-picture'))
+  );
+  document.getElementById('texture-position-wrap').style.opacity = state.texture === 'none' ? '0.35' : '1';
+
+  // Show/hide texture-specific controls
+  const isBlood = state.texture === 'blood';
+  const isRain  = state.texture === 'rain';
+  document.getElementById('texture-blood-controls').style.display = isBlood ? '' : 'none';
+  document.getElementById('texture-rain-controls').style.display  = isRain  ? '' : 'none';
+
+  // Blood controls sync
+  document.getElementById('texture-blood-color').value = state.textureBloodColor || '#8b0000';
+  setRange('texture-blood-mix', state.textureBloodMix || 50, 'texture-blood-mix-val', v => v + '%');
+
+  // Rain controls sync
+  setSwitch('texture-rain-fog-switch', state.textureRainFog);
+
   // Text Style
   document.querySelectorAll('.text-style-btn').forEach(b => b.classList.toggle('active', b.dataset.style === state.textStyle));
   const activeTS   = TEXT_STYLES.find(s => s.id === state.textStyle) || TEXT_STYLES[0];

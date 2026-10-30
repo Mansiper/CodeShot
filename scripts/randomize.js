@@ -56,6 +56,13 @@ function randomizeParams() {
   if (Math.random() < 0.5) {
     state.texture          = pick(TEXTURES.filter(t => t.id !== 'none').map(t => t.id));
     state.textureIntensity = rnd(20, 70);
+    state.textureSeed      = Math.floor(Math.random() * 2**31);
+    if (state.texture === 'blood') {
+      state.textureBloodMix = rnd(0, 100);
+    }
+    if (state.texture === 'rain') {
+      state.textureRainFog = Math.random() < 0.3;
+    }
   } else {
     state.texture = 'none';
   }

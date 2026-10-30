@@ -122,6 +122,14 @@ const TEXTURES = [
   { id: 'denim',         name: 'Denim',     preview: 'repeating-linear-gradient(30deg,#1a2a4a,#1a2a4a 4px,#243560 4px,#243560 8px)' },
   { id: 'vignette',      name: 'Vignette',  preview: 'radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.8) 100%)' },
   { id: 'frosted',       name: 'Frosted',   preview: 'linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05))' },
+  { id: 'blood',         name: 'Blood',     preview: 'linear-gradient(135deg,#3a0000,#8b0000)' },
+  { id: 'rain',          name: 'Rain',      preview: 'linear-gradient(135deg,#1a2a3a,#4a7a9b)' },
+];
+
+const TEXTURE_POSITIONS = [
+  { id: 'whole-picture',   name: 'Whole picture' },
+  { id: 'background-only', name: 'Background only' },
+  { id: 'over-window',     name: 'Over window' },
 ];
 
 const TEXT_STYLES = [
